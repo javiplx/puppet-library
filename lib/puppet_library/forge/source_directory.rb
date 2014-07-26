@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 # Puppet Library
 # Copyright (C) 2014 drrb
 #
@@ -45,7 +46,7 @@ module PuppetLibrary::Forge
                   SourceDirectory.new(config.get_path)
     end
 
-    # * <tt>:module_dir</tt> - The directory containing the unpackaged modules.
+    # * <tt>:module_dir</tt> - The directory containing the unpacked modules.
     def initialize(module_dir)
       super(self)
       @module_dir = module_dir
@@ -63,7 +64,6 @@ module PuppetLibrary::Forge
 
     def get_all_metadata
       get_metadata("*","*")
-#.sort! { |x,y| "#{x["name"]}" <=> "#{y["name"]}" }
     end
 
     def get_metadata(author, module_name)
@@ -86,7 +86,13 @@ module PuppetLibrary::Forge
       end
 
       Dir.chdir("#{directory_path}")
-      readmePath = Dir["README*"].first
+      # firstly trying to get the README.md file
+      readmePath = Dir["README.md"].last
+
+      if ! File.exist?(readmePath)
+        readmePath = Dir["README*"].last
+      end
+
       if File.exist?(readmePath)
         markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions = {})
         readmeText = File.open("#{directory_path}/#{readmePath}", "r:UTF-8").read
