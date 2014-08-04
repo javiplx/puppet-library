@@ -42,7 +42,7 @@ module PuppetLibrary::Util
         def with_tag(tag)
             update_cache!
             PuppetLibrary::Util::TempDir.use "git" do |path|
-                git "checkout #{tag}", path
+                git "checkout -f #{tag} .", path
                 yield(path)
             end
         end

@@ -37,8 +37,8 @@ module PuppetLibrary::Forge
             search_results = retrieve_all_metadata.select do |result|
                 search.matches? result
             end.sort_by do |result|
-                result.full_name.downcase
-            end.map do |result|
+                result.version
+            end.reverse.map do |result|
                 result.to_search_result
             end
 
@@ -187,10 +187,10 @@ module PuppetLibrary::Forge
                 "desc" => summary,
                 "project_url" => project_page,
                 "releases" => [{ "version" => version}],
+                "documentation" => documentation,
                 "version" => version,
                 "tag_list" => [author, name]
             }
         end
     end
 end
-

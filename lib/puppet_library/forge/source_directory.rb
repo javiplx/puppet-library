@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 # -*- encoding: utf-8 -*-
 # Puppet Library
-=======
->>>>>>> 78ceefb9618af5ba8d04396292ea5d8bc3b4eec1
 # Copyright (C) 2014 drrb
 #
 # This program is free software: you can redistribute it and/or modify
