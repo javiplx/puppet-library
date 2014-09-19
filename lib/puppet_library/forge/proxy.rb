@@ -55,9 +55,18 @@ module PuppetLibrary::Forge
         end
 
         def search_modules(query)
-            query_parameter = query.nil? ? "" : "?q=#{query}"
-            results = get("/modules.json#{query_parameter}")
-            JSON.parse results
+            query_parameter = query.nil? ? "" : "query=#{query}"
+            url = "/v3/modules?#{query_parameter}"
+            results = []
+            loop do
+              raw_response = get url
+              response = JSON.parse raw_response
+              results = results.concat response["results"]
+              url = response["pagination"]["next"]
+              print "Got #{response["results"].length} results. Next: #{url}\n"
+              break if url.nil?
+            end
+            results
         end
 
         def get_module_buffer(author, name, version)

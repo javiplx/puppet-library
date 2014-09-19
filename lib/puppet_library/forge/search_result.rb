@@ -24,29 +24,49 @@ module PuppetLibrary::Forge
                 result["full_name"]
             end
 
-            results_by_module.values.map do |module_results|
+            final_results = results_by_module.values.map do |module_results|
                 combine_search_results(module_results)
             end.flatten
+
+            paginate final_results
         end
 
         def self.combine_search_results(search_results)
-            highest_version, tags, releases = search_results.inject([nil, [], []]) do |(highest_version, tags, releases), result|
-                [
-                    max_version(highest_version, result["version"]),
-                    tags + (result["tag_list"] || []),
-                    releases + (result["releases"] || [])
-                ]
+            latest_release, releases = search_results.inject([nil, []]) do |(latest_release, releases), result|
+                releases += result["releases"] || []
+                max = latest_release && latest_release["version"] || 0
+                current = result["current_release"]["version"]
+                new_max = max_version(max, current)
+                if new_max == max
+                    [latest_release, releases]
+                else
+                    [result["current_release"], releases]
+                end
             end
 
             combined_result = search_results.first.tap do |result|
-                result["version"] = highest_version
-                result["tag_list"] = tags.uniq
                 result["releases"] = releases.uniq.version_sort_by {|r| r["version"]}.reverse
+                result["current_release"] = latest_release
             end
         end
 
         def self.max_version(left, right)
             [Gem::Version.new(left), Gem::Version.new(right)].max.version
+        end
+
+        def self.paginate(results)
+            {
+                "pagination" => {
+                    "limit" => results.length,
+                    "offset" => 0,
+                    "first" => nil,
+                    "previous" => nil,
+                    "current" => nil,
+                    "next" => nil,
+                    "total" => 1
+                },
+                "results" => results
+            }
         end
     end
 end
