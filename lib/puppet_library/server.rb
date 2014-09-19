@@ -80,8 +80,9 @@ module PuppetLibrary
             haml :index, { :locals => { "query" => query } }
         end
 
-        get "/modules.json" do
-            search_term = params[:q]
+        get "/v3/modules" do
+            search_term = params[:query]
+            content_type 'application/json'
             @forge.search_modules(search_term).to_json
         end
 
