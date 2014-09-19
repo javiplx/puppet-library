@@ -24,11 +24,9 @@ module PuppetLibrary::Forge
                 result["full_name"]
             end
 
-            final_results = results_by_module.values.map do |module_results|
+            results_by_module.values.map do |module_results|
                 combine_search_results(module_results)
             end.flatten
-
-            paginate final_results
         end
 
         def self.combine_search_results(search_results)
@@ -54,19 +52,5 @@ module PuppetLibrary::Forge
             [Gem::Version.new(left), Gem::Version.new(right)].max.version
         end
 
-        def self.paginate(results)
-            {
-                "pagination" => {
-                    "limit" => results.length,
-                    "offset" => 0,
-                    "first" => nil,
-                    "previous" => nil,
-                    "current" => nil,
-                    "next" => nil,
-                    "total" => 1
-                },
-                "results" => results
-            }
-        end
     end
 end

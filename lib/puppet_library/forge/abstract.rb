@@ -45,6 +45,10 @@ module PuppetLibrary::Forge
             SearchResult.merge_by_full_name(search_results)
         end
 
+        def get_release(author, name, version)
+            raise NotImplementedError
+        end
+
         def get_module_metadata(author, name)
             modules = retrieve_metadata(author, name)
 

@@ -20,6 +20,7 @@ require 'puppet_library/http/http_client'
 require 'puppet_library/http/cache/in_memory'
 require 'puppet_library/http/cache/noop'
 require 'puppet_library/util/config_api'
+require 'addressable/uri'
 
 module PuppetLibrary::Forge
 
@@ -54,96 +55,70 @@ module PuppetLibrary::Forge
             @download_cache.clear
         end
 
-        def search_modules(query)
-            query_parameter = query.nil? ? "" : "query=#{query}"
-            url = "/v3/modules?#{query_parameter}"
-            results = []
-            loop do
-              raw_response = get url
-              response = JSON.parse raw_response
-              results = results.concat response["results"]
-              url = response["pagination"]["next"]
-              print "Got #{response["results"].length} results. Next: #{url}\n"
-              break if url.nil?
-            end
-            results
+        def search_modules(params)
+            query_params = construct_url params
+            url = "/v3/modules?#{query_params}"
+            get_all_pages url
+        end
+
+        def get_release_metadata(author, name, version)
+            url = "/v3/releases/#{author}-#{name}-#{version}"
+            JSON.parse(get url)
+        end
+
+        def search_releases(params)
+            query_params = construct_url params
+            url = "/v3/releases?#{query_params}"
+            get_all_pages url
         end
 
         def get_module_buffer(author, name, version)
             begin
-                version_info = get_module_version(author, name, version)
-                raise ModuleNotFound if version_info.nil?
-                download_module(author, name, version, version_info["file"])
+                #version_info = get_module_version(author, name, version)
+                #raise ModuleNotFound if version_info.nil?
+                #download_module(author, name, version, version_info["file"])
+                # TODO: Return cache
+                download_module(author, name, version, module_path_for(author, name, version))
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
             end
         end
 
-        def get_module_metadata(author, name)
-            begin
-                response = get("/#{author}/#{name}.json")
-                JSON.parse(response)
-            rescue OpenURI::HTTPError
-                raise ModuleNotFound
-            end
-        end
-
-        def get_module_metadata_with_dependencies(author, name, version)
-            begin
-                look_up_releases(author, name, version) do |full_name, release_info|
-                    release_info["file"] = module_path_for(full_name, release_info["version"])
-                end
-            rescue OpenURI::HTTPError
-                raise ModuleNotFound
-            end
+        def construct_url(params)
+            uri = ::Addressable::URI.new
+            uri.query_values = params
+            uri.query
         end
 
         private
-        def get_module_version(author, name, version)
-            module_versions = get_module_versions(author, name)
-            module_versions.find do |version_info|
-                version_info["version"] == version
-            end
+        def module_path_for(author, module_name, version)
+            "/v3/files/#{author}-#{module_name}-#{version}.tar.gz"
         end
 
-        def get_module_versions(author, name)
-            versions = look_up_releases(author, name)
-            versions["#{author}/#{name}"]
-        end
-
-        def look_up_releases(author, name, version = nil, &optional_processor)
-            version_query = version ? "&version=#{version}" : ""
-            url = "/api/v1/releases.json?module=#{author}/#{name}#{version_query}"
-            response_text = get(url)
-            response = JSON.parse(response_text)
-            process_releases_response(response, &optional_processor)
-        end
-
-        def process_releases_response(response)
-            if block_given?
-                response.each do |full_name, release_infos|
-                    release_infos.each do |release_info|
-                        yield(full_name, release_info)
-                    end
-                end
-            end
-            return response
-        end
-
-        def module_path_for(full_name, version)
-            "/modules/#{full_name.sub("/", "-")}-#{version}.tar.gz"
-        end
-
-        def download_module(author, name, version, file)
+        def download_module(author, name, version)
             @download_cache.get("#{author}-#{name}-#{version}.tar.gz") do
-                @http_client.download(url(file))
+                @http_client.download(url(module_path_for(author, name, version)))
             end
         end
 
         def get(relative_url)
             @query_cache.get(relative_url) do
+                puts "Getting #{url(relative_url)}"
                 @http_client.get(url(relative_url))
             end
+        end
+
+        def get_all_pages(url)
+            results = []
+            loop do
+              response = JSON.parse(get url)
+              results += response["results"]
+              url = response["pagination"]["next"]
+              print "Got #{response["results"].length} results. Next: #{url}\n"
+              break if url.nil?
+            end
+            puts "URL: #{url}, got total #{results.length}"
+            results
         end
 
         def url(relative_url)

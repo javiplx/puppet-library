@@ -56,23 +56,29 @@ module PuppetLibrary::Forge
             @forges << forge
         end
 
-        def search_modules(query)
-            all_results = @forges.map do |forge|
-                forge.search_modules(query)
-            end.flatten
+        def search_modules(params)
+            all_results = @forges.inject([]) do |results, forge|
+                results += forge.search_modules(params)
+            end
 
-            SearchResult.merge_by_full_name(all_results)
+            #paginate SearchResult.merge_by_full_name(all_results)
+            # TODO: Remove duplicates
+            paginate all_results
         end
 
-        def get_module_buffer(author, name, version)
-            @forges.each do |forge|
+        def search_releases(params)
+            all_results = @forges.inject([]) do |all, forge|
                 begin
-                    return forge.get_module_buffer(author, name, version)
+                    all += forge.search_releases(params)
                 rescue ModuleNotFound
                     # Try the next one
+                rescue NotImplementedError
+                    # TODO: Remove this when method is implemented in all forge types
                 end
             end
-            raise ModuleNotFound
+
+            # TODO: Remove duplicates
+            paginate all_results
         end
 
         def get_module_metadata(author, name)
@@ -87,6 +93,29 @@ module PuppetLibrary::Forge
             metadata_list.deep_merge.tap do |metadata|
                 metadata["releases"] = metadata["releases"].unique_by { |release| release["version"] }
             end
+        end
+
+        def get_release_metadata(author, name, version)
+            @forges.each do |forge|
+                begin
+                    return forge.get_release_metadata(author, name, version)
+                rescue ModuleNotFound
+                    # Try the next one
+                rescue NotImplementedError
+                    # TODO: Remove this when method is implemented in all forge types
+                end
+            end
+        end
+
+        def get_module_buffer(author, name, version)
+            @forges.each do |forge|
+                begin
+                    return forge.get_module_buffer(author, name, version)
+                rescue ModuleNotFound
+                    # Try the next one
+                end
+            end
+            raise ModuleNotFound
         end
 
         def get_module_metadata_with_dependencies(author, name, version)
@@ -125,6 +154,21 @@ module PuppetLibrary::Forge
                     metadata[module_name] = releases.unique_by { |release| release["version"] }
                 end
             end
+        end
+
+        def paginate(results)
+            {
+                "pagination" => {
+                    "limit" => results.length,
+                    "offset" => 0,
+                    "first" => nil,
+                    "previous" => nil,
+                    "current" => nil,
+                    "next" => nil,
+                    "total" => results.length
+                },
+                "results" => results
+            }
         end
     end
 end

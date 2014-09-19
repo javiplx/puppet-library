@@ -18,7 +18,7 @@
 module PuppetLibrary::Http
     module Cache
         class InMemory
-            ARBITRARY_CACHE_TTL_SECONDS = 10
+            ARBITRARY_CACHE_TTL_SECONDS = 3600
             def initialize(seconds_to_live = ARBITRARY_CACHE_TTL_SECONDS)
                 @reaper = Reaper.new(seconds_to_live)
             end
