@@ -116,10 +116,9 @@ module PuppetLibrary
             module_name = params[:module]
             version = params[:version]
             begin
-                puts "Calling multi forge get release"
                 @forge.get_release_metadata(author, module_name, version).to_json
             rescue Forge::ModuleNotFound
-                halt 410, {"error" => "Module #{author}/#{module_name} not found"}.to_json
+                halt 410, {"errors" => "Module #{author}-#{module_name}-#{version} not found"}.to_json
             end
         end
 
