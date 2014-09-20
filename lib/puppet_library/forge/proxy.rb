@@ -32,7 +32,7 @@ module PuppetLibrary::Forge
     #        # The URL of the remote forge
     #        url "http://forge.example.com"
     #    end
-    class Proxy < Forge
+    class Proxy < Abstract
 
         def self.configure(&block)
             config_api = PuppetLibrary::Util::ConfigApi.for(Proxy) do
@@ -61,15 +61,20 @@ module PuppetLibrary::Forge
             get_all_pages url
         end
 
-        def get_release_metadata(author, name, version)
-            url = "/v3/releases/#{author}-#{name}-#{version}"
-            JSON.parse(get url)
-        end
-
         def search_releases(params)
             query_params = construct_url params
             url = "/v3/releases?#{query_params}"
             get_all_pages url
+        end
+
+        def get_module_metadata(author, name)
+            url = "/v3/modules/#{author}-#{name}"
+            JSON.parse(get url)
+        end
+
+        def get_release_metadata(author, name, version)
+            url = "/v3/releases/#{author}-#{name}-#{version}"
+            JSON.parse(get url)
         end
 
         def get_module_buffer(author, name, version)
@@ -103,7 +108,6 @@ module PuppetLibrary::Forge
 
         def get(relative_url)
             @query_cache.get(relative_url) do
-                puts "Getting #{url(relative_url)}"
                 @http_client.get(url(relative_url))
             end
         end
@@ -117,7 +121,6 @@ module PuppetLibrary::Forge
               print "Got #{response["results"].length} results. Next: #{url}\n"
               break if url.nil?
             end
-            puts "URL: #{url}, got total #{results.length}"
             results
         end
 
