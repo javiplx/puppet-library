@@ -15,5 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 module PuppetLibrary::PuppetModule
+    class ReleaseNotFound < Exception
+    end
+
     require 'puppet_library/puppet_module/modulefile'
+    require 'puppet_library/puppet_module/release'
+    require 'puppet_library/puppet_module/module'
 end
