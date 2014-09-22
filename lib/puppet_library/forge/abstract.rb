@@ -27,14 +27,15 @@ module PuppetLibrary::Forge
     #
     # See PuppetLibrary::Forge::Directory for an example
     class Abstract < Forge
-        def initialize()
+        def initialize
+            @modules = []
             load_modules
         end
 
         def search_modules(params)
             results = []
             @modules.each do |current_module|
-                results.push current_module.get_long if current_module.match? params
+                results.push current_module if current_module.match?(params)
             end
             results
         end
@@ -42,7 +43,7 @@ module PuppetLibrary::Forge
         def search_releases(params)
             results = []
             @modules.each do |current_module|
-                results += current_module.get_matching_releases params
+                results += current_module.get_matching_releases(params)
             end
             results
         end
@@ -50,7 +51,7 @@ module PuppetLibrary::Forge
         def get_module_metadata(author, module_name)
             @modules.each do |current_module|
                 if current_module.get_full_name == "#{author}-#{module_name}"
-                    return current_module.get_long
+                    return current_module
                 end
             end
             raise ModuleNotFound
@@ -60,7 +61,7 @@ module PuppetLibrary::Forge
             @modules.each do |current_module|
                 if current_module.get_full_name == "#{author}-#{module_name}"
                     begin
-                        return current_module.get_release version
+                        return current_module.get_release(version)
                     rescue ReleaseNotFound
                         raise ModuleNotFound
                     end
@@ -74,15 +75,21 @@ module PuppetLibrary::Forge
         end
 
         private
-        def add_module(module_metadata, source_metadata)
-            new_module_name = module_metadata["name"]
+        def clear_modules!
+            @modules.clear
+        end
+
+        def add_module(new_module)
             @modules.each do |current_module|
-                if current_module.get_full_name == new_module_name
-                    current_module.add_release(module_metadata, source_metadata)
+                if current_module.equals? new_module
+                    current_module.merge_with new_module
                     return
                 end
             end
-            @modules.push PuppetLibrary::PuppetModule::Module.new(module_metadata, source_metadata)
+            @modules.push new_module
+        end
+
+        def load_modules
         end
     end
 end

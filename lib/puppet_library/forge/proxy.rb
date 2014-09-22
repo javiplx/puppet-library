@@ -58,13 +58,31 @@ module PuppetLibrary::Forge
         def search_modules(params)
             query_params = construct_url params
             url = "/v3/modules?#{query_params}"
-            get_all_pages url
+            begin
+                raw_results = get_all_pages(url)
+            rescue ::OpenURI::HTTPError
+                raise ModuleNotFound
+            end
+            modules = []
+            raw_results.each do |result|
+                modules << PuppetLibrary::PuppetModule::Module.new_from_module_metadata(result)
+            end
+            modules
         end
 
         def search_releases(params)
             query_params = construct_url params
             url = "/v3/releases?#{query_params}"
-            get_all_pages url
+            begin
+                raw_results = get_all_pages(url)
+            rescue ::OpenURI::HTTPError
+                raise ModuleNotFound
+            end
+            releases = []
+            raw_results.each do |result|
+                releases << PuppetLibrary::PuppetModule::Release.new_from_release_metadata(result)
+            end
+            releases
         end
 
         def get_module_metadata(author, name)

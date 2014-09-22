@@ -18,7 +18,6 @@ require 'json'
 require 'puppet_library/forge/abstract'
 require 'puppet_library/archive/archive_reader'
 require 'puppet_library/util/config_api'
-require 'puppet_library/puppet_module/module'
 
 module PuppetLibrary::Forge
 
@@ -53,7 +52,7 @@ module PuppetLibrary::Forge
         # * <tt>:module_dir</tt> - The directory containing the packaged modules.
         def initialize(module_dir)
             @module_dir = module_dir
-            super()
+            super
         end
 
         def get_module_buffer(author, name, version)
@@ -87,14 +86,12 @@ module PuppetLibrary::Forge
            "#{@module_dir.path}/#{filename}"
         end
 
-        def load_modules()
-            @modules = []
+        def load_modules
             Dir.foreach(@module_dir) do |item|
                 next if item == '.' or item == '..'
                 module_metadata = read_metadata(full_path(item))
                 source_metadata = get_file_metadata(full_path(item))
-                # TODO: Add checksums and types to metadata
-                add_module(module_metadata, source_metadata)
+                add_module(PuppetLibrary::PuppetModule::Module.new_from_source(module_metadata, source_metadata))
             end
         end
 
