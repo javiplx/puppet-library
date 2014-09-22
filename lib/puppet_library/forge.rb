@@ -19,6 +19,7 @@ module PuppetLibrary::Forge
     class ModuleNotFound < Exception
     end
 
+    require 'puppet_library/puppet_module'
     require 'puppet_library/forge/abstract'
     require 'puppet_library/forge/cache'
     require 'puppet_library/forge/directory'
