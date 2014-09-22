@@ -75,6 +75,14 @@ module PuppetLibrary::Forge
             return nil
         end
 
+        def get_file_metadata(file_path)
+            # TODO: Complete metadata
+            {
+                "file-md5" => Digest::MD5.hexdigest(File.read(file_path)),
+                "file-size" => File.size(file_path)
+            }
+        end
+
         def full_path(filename)
            "#{@module_dir.path}/#{filename}"
         end
@@ -83,10 +91,9 @@ module PuppetLibrary::Forge
             @modules = []
             Dir.foreach(@module_dir) do |item|
                 next if item == '.' or item == '..'
-                module_metadata = read_metadata full_path item
-                # TODO: Add source metadata
+                module_metadata = read_metadata(full_path(item))
+                source_metadata = get_file_metadata(full_path(item))
                 # TODO: Add checksums and types to metadata
-                source_metadata = {}
                 add_module(module_metadata, source_metadata)
             end
         end
