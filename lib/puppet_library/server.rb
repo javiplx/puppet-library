@@ -100,11 +100,7 @@ module PuppetLibrary
         end
 
         get "/v3/releases" do
-            begin
-                @forge.search_releases(params).to_json
-            rescue Forge::ModuleNotFound
-                halt 400, {"errors" => "not found"}.to_json
-            end
+            @forge.search_releases(params).to_json
         end
 
         get "/v3/releases/:author-:module-:version" do
