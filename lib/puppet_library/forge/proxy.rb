@@ -68,22 +68,26 @@ module PuppetLibrary::Forge
         end
 
         def get_module_metadata(author, name)
-            url = "/v3/modules/#{author}-#{name}"
-            JSON.parse(get url)
+            begin
+                url = "/v3/modules/#{author}-#{name}"
+                JSON.parse(get url)
+            rescue ::OpenURI::HTTPError
+                raise ModuleNotFound
+            end
         end
 
         def get_release_metadata(author, name, version)
-            url = "/v3/releases/#{author}-#{name}-#{version}"
-            JSON.parse(get url)
+            begin
+                url = "/v3/releases/#{author}-#{name}-#{version}"
+                JSON.parse(get url)
+            rescue ::OpenURI::HTTPError
+                raise ModuleNotFound
+            end
         end
 
         def get_module_buffer(author, name, version)
             begin
-                #version_info = get_module_version(author, name, version)
-                #raise ModuleNotFound if version_info.nil?
-                #download_module(author, name, version, version_info["file"])
-                # TODO: Return cache
-                download_module(author, name, version, module_path_for(author, name, version))
+                download_module(author, name, version)
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
             end
