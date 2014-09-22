@@ -48,9 +48,44 @@ module PuppetLibrary::Forge
             end
         end
 
-        def self.max_version(left, right)
-            [Gem::Version.new(left), Gem::Version.new(right)].max.version
+        def self.remove_duplicates(results)
+            # TODO: Improve this method
+            return [] unless results
+
+            results_by_module = results.group_by do |result|
+                result.get_full_name
+            end
+
+            unique_results = []
+            results_by_module.each do |full_name, result_group|
+                unique_results << result_group.first
+            end
+
+            unique_results
         end
 
+        def self.merge_duplicate_modules(results)
+            return [] unless results
+
+            groups_by_name = results.group_by do |result|
+                result.get_full_name
+            end
+
+            merged_results = []
+            groups_by_name.each do |name, result_group|
+                if result_group.length == 1
+                    merged_results << result_group.first
+                else
+                    base = result_group.first
+                    duplicates = result_group.last(result_group.length - 1)
+                    duplicates.each do |duplicate|
+                        base.merge_with duplicate
+                    end
+                    merged_results << base
+                end
+            end
+
+            merged_results
+        end
     end
 end

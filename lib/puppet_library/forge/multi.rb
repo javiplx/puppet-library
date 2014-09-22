@@ -58,12 +58,17 @@ module PuppetLibrary::Forge
 
         def search_modules(params)
             all_results = @forges.inject([]) do |results, forge|
-                results += forge.search_modules(params)
+                begin
+                    results += forge.search_modules(params)
+                rescue ModuleNotFound
+                    # Try the next one
+                rescue NotImplmenetedError
+                    # TODO: Remove this when method is implemented in all forge types
+                end
             end
 
-            #paginate SearchResult.merge_by_full_name(all_results)
-            # TODO: Remove duplicates
-            paginate all_results
+            unique_results = SearchResult.merge_duplicate_modules(all_results)
+            paginate(to_output_format(unique_results))
         end
 
         def search_releases(params)
@@ -77,8 +82,8 @@ module PuppetLibrary::Forge
                 end
             end
 
-            # TODO: Remove duplicates
-            paginate all_results
+            unique_results = SearchResult.remove_duplicates(all_results)
+            paginate(to_output_format(unique_results))
         end
 
         def get_module_metadata(author, name)
@@ -89,7 +94,7 @@ module PuppetLibrary::Forge
                     metadata_list
                 end
             end
-            raise ModuleNotFound if metadata_list.empty?
+
             metadata_list.deep_merge.tap do |metadata|
                 metadata["releases"] = metadata["releases"].unique_by { |release| release["version"] }
             end
@@ -119,6 +124,15 @@ module PuppetLibrary::Forge
                 end
             end
             raise ModuleNotFound
+        end
+
+        private
+        def to_output_format(objects)
+            results = []
+            objects.each do |object|
+                results << object.get_long
+            end
+            results
         end
 
         def paginate(results)
