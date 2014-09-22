@@ -52,7 +52,7 @@ module PuppetLibrary::Forge
         # * <tt>:module_dir</tt> - The directory containing the packaged modules.
         def initialize(module_dir)
             @module_dir = module_dir
-            super
+            super()
         end
 
         def get_module_buffer(author, name, version)
