@@ -88,7 +88,8 @@ module PuppetLibrary::Forge
         def get_module_metadata(author, name)
             begin
                 url = "/v3/modules/#{author}-#{name}"
-                JSON.parse(get url)
+                result = JSON.parse(get url)
+                PuppetLibrary::PuppetModule::Module.new_from_module_metadata(result)
             rescue ::OpenURI::HTTPError
                 raise ModuleNotFound
             end
@@ -97,7 +98,8 @@ module PuppetLibrary::Forge
         def get_release_metadata(author, name, version)
             begin
                 url = "/v3/releases/#{author}-#{name}-#{version}"
-                JSON.parse(get url)
+                result = JSON.parse(get url)
+                PuppetLibrary::PuppetModule::Release.new_from_release_metadata(result)
             rescue ::OpenURI::HTTPError
                 raise ModuleNotFound
             end

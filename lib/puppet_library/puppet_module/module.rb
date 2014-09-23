@@ -139,10 +139,10 @@ module PuppetLibrary::PuppetModule
         end
 
         def get_release(version)
+            raise ReleaseNotFound unless @versions.include? version
             @releases.each do |release|
-                return release.get_long if release.get_version == version
+                return release if release.get_version == version
             end
-            raise ReleaseNotFound
         end
 
         def get_full_name

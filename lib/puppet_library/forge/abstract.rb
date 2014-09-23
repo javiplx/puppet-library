@@ -62,7 +62,7 @@ module PuppetLibrary::Forge
                 if current_module.get_full_name == "#{author}-#{module_name}"
                     begin
                         return current_module.get_release(version)
-                    rescue ReleaseNotFound
+                    rescue PuppetLibrary::PuppetModule::ReleaseNotFound
                         raise ModuleNotFound
                     end
                 end

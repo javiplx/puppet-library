@@ -87,23 +87,26 @@ module PuppetLibrary::Forge
         end
 
         def get_module_metadata(author, name)
-            metadata_list = @forges.inject([]) do |metadata_list, forge|
+            combined_module = @forges.inject(nil) do |combined_module, forge|
                 begin
-                    metadata_list << forge.get_module_metadata(author, name)
+                    new_module = forge.get_module_metadata(author, name) 
+                    if combined_module then 
+                        combined_module.merge new_module
+                    else
+                        combined_module = new_module 
+                    end
                 rescue ModuleNotFound
-                    metadata_list
                 end
+                combined_module
             end
-
-            metadata_list.deep_merge.tap do |metadata|
-                metadata["releases"] = metadata["releases"].unique_by { |release| release["version"] }
-            end
+            raise ModuleNotFound unless combined_module
+            combined_module.get_long
         end
 
         def get_release_metadata(author, name, version)
             @forges.each do |forge|
                 begin
-                    return forge.get_release_metadata(author, name, version)
+                    return forge.get_release_metadata(author, name, version).get_long
                 rescue ModuleNotFound
                     # Try the next one
                 rescue NotImplementedError
