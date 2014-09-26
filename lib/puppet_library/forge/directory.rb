@@ -87,6 +87,7 @@ module PuppetLibrary::Forge
         end
 
         def load_modules
+            clear_modules!
             Dir.foreach(@module_dir) do |item|
                 next if item == '.' or item == '..'
                 module_metadata = read_metadata(full_path(item))

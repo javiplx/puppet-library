@@ -29,10 +29,10 @@ module PuppetLibrary::Forge
     class Abstract < Forge
         def initialize
             @modules = []
-            load_modules
         end
 
         def search_modules(params)
+            load_modules
             results = []
             @modules.each do |current_module|
                 results.push current_module if current_module.match?(params)
@@ -41,6 +41,7 @@ module PuppetLibrary::Forge
         end
 
         def search_releases(params)
+            load_modules
             results = []
             @modules.each do |current_module|
                 results += current_module.get_matching_releases(params)
@@ -49,6 +50,7 @@ module PuppetLibrary::Forge
         end
 
         def get_module_metadata(author, module_name)
+            load_modules
             @modules.each do |current_module|
                 if current_module.get_full_name == "#{author}-#{module_name}"
                     return current_module
@@ -58,6 +60,7 @@ module PuppetLibrary::Forge
         end
 
         def get_release_metadata(author, module_name, version)
+            load_modules
             @modules.each do |current_module|
                 if current_module.get_full_name == "#{author}-#{module_name}"
                     begin
