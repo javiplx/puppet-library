@@ -1,0 +1,21 @@
+Source: puppet-library
+Section: ruby
+Priority: optional
+Maintainer: Javier Palacios <javier.palacios@fon.com>
+Build-Depends: debhelper (>= 7.0.50~), gem2deb
+Standards-Version: 3.9.5
+XS-Ruby-Versions: all
+
+Package: puppet-library
+Architecture: all
+XB-Ruby-Versions: ${ruby:Versions}
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         ruby-docile, ruby-open4,
+         ruby-rack, ruby-sinatra,
+         ruby-haml,
+         ruby | ruby-interpreter,
+Description: Private puppet forge compatible with librarian-puppet
+ Puppet Library serves Puppet modules in the same format as the Puppet Forge.
+ This allows you to create a private Puppet Forge and manage all the modules
+ you use completely within your infrastructure.
