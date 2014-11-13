@@ -26,7 +26,7 @@ module PuppetLibrary::Forge
 
             results_by_module.values.map do |module_results|
                 combine_search_results(module_results)
-            end.flatten
+            end.sort{|x,y| x["full_name"] <=> y["full_name"]}.flatten
         end
 
         def self.combine_search_results(search_results)
