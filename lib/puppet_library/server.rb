@@ -110,10 +110,16 @@ module PuppetLibrary
             end
         end
 
-        get "/modules/:author-:module-:version.tar.gz" do
-            author = params[:author]
-            name = params[:module]
-            version = params[:version]
+        get "/modules/:puppet_module.tar.gz" do
+            puppet_module = params[:puppet_module]
+
+            @params = puppet_module.split('-')
+            author = @params[0]
+            name = @params[1]
+            version = [ @params[2]]
+            # Semantic versioning allows a hyphen (-) to denote pre-release versioning
+            version << "-#{@params[3]}" if @params.length == 4
+            version = version.to_s
 
             content_type "application/octet-stream"
 
