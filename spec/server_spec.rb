@@ -278,5 +278,37 @@ module PuppetLibrary
                 end
             end
         end
+
+        describe "/api/v3" do
+            # Documentation & fixtures on https://forgeapi.puppetlabs.com/
+
+            context "/modules" do
+                # https://forgeapi.puppetlabs.com:443/v3/modules?query=stdlib&limit=2
+                it "search for modules" do
+                    get "/api/v3/modules?query=stdlib"
+                end
+            end
+
+            context "/modules/{user}-{module}" do
+                # https://forgeapi.puppetlabs.com:443/v3/modules/puppetlabs-stdlib
+                it "get the latest information for a specific module" do
+                    get "/api/v3/releases.json?module=puppetlabs/apache"
+                end
+            end
+
+            context "/releases" do
+                # https://forgeapi.puppetlabs.com:443/v3/releases?module=puppetlabs-stdlib&limit=2
+                it "get a list of releases" do
+                    get "/api/v3/releases"
+                end
+            end
+
+            context "/releases/{user}-{module}-{version}" do
+                # https://forgeapi.puppetlabs.com:443/v3/releases/puppetlabs-stdlib-4.1.0
+                it "returns information about a given release" do
+                    get "/api/v3/releases/puppetlabs-apache-1.0.0"
+                end
+            end
+        end
     end
 end

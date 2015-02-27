@@ -1,0 +1,387 @@
+{
+  "uri": "/v3/modules/puppetlabs-stdlib",
+  "name": "stdlib",
+  "downloads": 2495837,
+  "created_at": "2011-05-24 18:34:58 -0700",
+  "updated_at": "2015-02-27 13:20:55 -0800",
+  "supported": true,
+  "endorsement": "supported",
+  "module_group": "base",
+  "owner": {
+    "uri": "/v3/users/puppetlabs",
+    "username": "puppetlabs",
+    "gravatar_id": "fdd009b7c1ec96e088b389f773e87aec"
+  },
+  "current_release": {
+    "uri": "/v3/releases/puppetlabs-stdlib-4.5.1",
+    "module": {
+      "uri": "/v3/modules/puppetlabs-stdlib",
+      "name": "stdlib",
+      "owner": {
+        "uri": "/v3/users/puppetlabs",
+        "username": "puppetlabs",
+        "gravatar_id": "fdd009b7c1ec96e088b389f773e87aec"
+      }
+    },
+    "version": "4.5.1",
+    "metadata": {
+      "name": "puppetlabs-stdlib",
+      "version": "4.5.1",
+      "author": "puppetlabs",
+      "summary": "Standard library of resources for Puppet modules.",
+      "license": "Apache-2.0",
+      "source": "https://github.com/puppetlabs/puppetlabs-stdlib",
+      "project_page": "https://github.com/puppetlabs/puppetlabs-stdlib",
+      "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
+      "operatingsystem_support": [
+        {
+          "operatingsystem": "RedHat",
+          "operatingsystemrelease": [
+            "4",
+            "5",
+            "6",
+            "7"
+          ]
+        },
+        {
+          "operatingsystem": "CentOS",
+          "operatingsystemrelease": [
+            "4",
+            "5",
+            "6",
+            "7"
+          ]
+        },
+        {
+          "operatingsystem": "OracleLinux",
+          "operatingsystemrelease": [
+            "4",
+            "5",
+            "6",
+            "7"
+          ]
+        },
+        {
+          "operatingsystem": "Scientific",
+          "operatingsystemrelease": [
+            "4",
+            "5",
+            "6",
+            "7"
+          ]
+        },
+        {
+          "operatingsystem": "SLES",
+          "operatingsystemrelease": [
+            "10 SP4",
+            "11 SP1",
+            "12"
+          ]
+        },
+        {
+          "operatingsystem": "Debian",
+          "operatingsystemrelease": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "operatingsystem": "Ubuntu",
+          "operatingsystemrelease": [
+            "10.04",
+            "12.04",
+            "14.04"
+          ]
+        },
+        {
+          "operatingsystem": "Solaris",
+          "operatingsystemrelease": [
+            "10",
+            "11"
+          ]
+        },
+        {
+          "operatingsystem": "Windows",
+          "operatingsystemrelease": [
+            "Server 2003",
+            "Server 2003 R2",
+            "Server 2008",
+            "Server 2008 R2",
+            "Server 2012",
+            "Server 2012 R2",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "operatingsystem": "AIX",
+          "operatingsystemrelease": [
+            "5.3",
+            "6.1",
+            "7.1"
+          ]
+        }
+      ],
+      "requirements": [
+        {
+          "name": "pe",
+          "version_requirement": "3.x"
+        },
+        {
+          "name": "puppet",
+          "version_requirement": ">=2.7.20 <4.0.0"
+        }
+      ],
+      "description": "Standard Library for Puppet Modules",
+      "dependencies": [
+
+      ]
+    },
+    "tags": [
+      "puppetlabs",
+      "library",
+      "stdlib",
+      "standard",
+      "stages"
+    ],
+    "supported": false,
+    "validation_score": 100,
+    "file_uri": "/v3/files/puppetlabs-stdlib-4.5.1.tar.gz",
+    "file_size": 104201,
+    "file_md5": "32e754afa87e3686cdc6e8faa130d09f",
+    "downloads": 166945,
+    "readme": "#stdlib\n\n[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-stdlib.png?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-stdlib)\n\n####Table of Contents\n\n1. [Overview](#overview)\n2. [Module Description - What the module does and why it is useful](#module-description)\n3. [Setup - The basics of getting started with stdlib](#setup)\n4. [Usage - Configuration options and additional functionality](#usage)\n5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)\n5. [Limitations - OS compatibility, etc.](#limitations)\n6. [Development - Guide for contributing to the module](#development)\n\n##Overview\n\nAdds a standard library of resources for Puppet modules.    \n\n##Module Description\n\nThis module provides a standard library of resources for the development of Puppet\nmodules. Puppet modules make heavy use of this standard library. The stdlib module adds the following resources to Puppet:\n\n * Stages\n * Facts\n * Functions\n * Defined resource types\n * Types\n * Providers\n \n> *Note:* As of version 3.7, Puppet Enterprise no longer includes the stdlib module. If you're running Puppet Enterprise, you should install the most recent release of stdlib for compatibility with Puppet modules.\n\n##Setup\n\nInstalling the stdlib module adds the functions, facts, and resources of this standard library to Puppet. \n\n##Usage\n\nAfter you've installed stdlib, all of its functions, facts, and resources are available for module use or development. \n\nIf you want to use a standardized set of run stages for Puppet, `include stdlib` in your manifest. \n\n## Reference\n\n### Classes \n\n#### Public Classes\n\n* `stdlib`: Most of stdlib's features are automatically loaded by Puppet. To use standardized run stages in Puppet, declare this class in your manifest with `include stdlib`.\n\n  When declared, stdlib declares all other classes in the module. The only other class currently included in the module is `stdlib::stages`.\n\n  The stdlib class has no parameters.\n\n#### Private Classes\n\n* `stdlib::stages`: This class manages a standard set of run stages for Puppet. It is managed by the stdlib class and should not be declared independently.\n\n  The `stdlib::stages` class declares various run stages for deploying infrastructure, language runtimes, and application layers. The high level stages are (in order):\n\n  * setup\n  * main\n  * runtime\n  * setup_infra\n  * deploy_infra\n  * setup_app\n  * deploy_app\n  * deploy\n\n  Sample usage:\n\n  ```\n  node default {\n    include stdlib\n    class { java: stage => 'runtime' }\n  }\n  ```\n  \n### Resources\n\n* `file_line`: This resource ensures that a given line, including whitespace at the beginning and end, is contained within a file. If the line is not contained in the given file, Puppet will add the line. Multiple resources can be declared to manage multiple lines in the same file. You can also use match to replace existing lines. \n \n  ```\n  file_line { 'sudo_rule':\n    path => '/etc/sudoers',\n    line => '%sudo ALL=(ALL) ALL',\n  }\n  file_line { 'sudo_rule_nopw':\n    path => '/etc/sudoers',\n    line => '%sudonopw ALL=(ALL) NOPASSWD: ALL',\n  }\n  ```\n  \n  * `after`: Specify the line after which Puppet will add any new lines. (Existing lines are added in place.) Optional.\n  * `ensure`: Ensures whether the resource is present. Valid values are 'present', 'absent'.\n * `line`: The line to be added to the file located by the `path` parameter.\n * `match`: A regular expression to run against existing lines in the file; if a match is found, we replace that line rather than adding a new line. Optional.\n * `multiple`: Determine if match can change multiple lines. Valid values are 'true', 'false'. Optional.\n * `name`: An arbitrary name used as the identity of the resource.\n * `path`: The file in which Puppet will ensure the line specified by the line parameter.\n  \n### Functions\n\n* `abs`: Returns the absolute value of a number; for example, '-34.56' becomes '34.56'. Takes a single integer and float value as an argument. *Type*: rvalue\n\n* `any2array`: This converts any object to an array containing that object. Empty argument lists are converted to an empty array. Arrays are left untouched. Hashes are converted to arrays of alternating keys and values. *Type*: rvalue\n\n* `base64`: Converts a string to and from base64 encoding.\nRequires an action ('encode', 'decode') and either a plain or base64-encoded\nstring. *Type*: rvalue\n\n* `bool2num`: Converts a boolean to a number. Converts values:\n  * 'false', 'f', '0', 'n', and 'no' to 0.\n  * 'true', 't', '1', 'y', and 'yes' to 1.\n  Requires a single boolean or string as an input. *Type*: rvalue\n\n* `capitalize`: Capitalizes the first letter of a string or array of strings.\nRequires either a single string or an array as an input. *Type*: rvalue\n\n* `chomp`: Removes the record separator from the end of a string or an array of\nstrings; for example, 'hello\\n' becomes 'hello'. Requires a single string or array as an input. *Type*: rvalue\n\n* `chop`: Returns a new string with the last character removed. If the string ends with '\\r\\n', both characters are removed. Applying `chop` to an empty string returns an empty string. If you want to merely remove record separators, then you should use the `chomp` function. Requires a string or an array of strings as input. *Type*: rvalue\n\n* `concat`: Appends the contents of array 2 onto array 1. For example, `concat(['1','2','3'],'4')` results in: ['1','2','3','4']. *Type*: rvalue\n\n* `count`: Takes an array as first argument and an optional second argument. Count the number of elements in array that matches second argument. If called with only an array, it counts the number of elements that are **not** nil/undef. *Type*: rvalue\n\n* `defined_with_params`: Takes a resource reference and an optional hash of attributes. Returns 'true' if a resource with the specified attributes has already been added to the catalog. Returns 'false' otherwise.\n\n  ```\n  user { 'dan':\n    ensure => present,\n  }\n\n  if ! defined_with_params(User[dan], {'ensure' => 'present' }) {\n    user { 'dan': ensure => present, }\n  }\n  ```\n  \n  *Type*: rvalue\n\n* `delete`: Deletes all instances of a given element from an array, substring from a\nstring, or key from a hash. For example, `delete(['a','b','c','b'], 'b')` returns ['a','c']; `delete('abracadabra', 'bra')` returns 'acada'. *Type*: rvalue\n\n* `delete_at`: Deletes a determined indexed value from an array. For example, `delete_at(['a','b','c'], 1)` returns ['a','c']. *Type*: rvalue\n\n* `delete_values`: Deletes all instances of a given value from a hash. For example, `delete_values({'a'=>'A','b'=>'B','c'=>'C','B'=>'D'}, 'B')` returns {'a'=>'A','c'=>'C','B'=>'D'} *Type*: rvalue\n\n* `delete_undef_values`: Deletes all instances of the undef value from an array or hash. For example, `$hash = delete_undef_values({a=>'A', b=>'', c=>undef, d => false})` returns {a => 'A', b => '', d => false}. *Type*: rvalue\n\n* `difference`: Returns the difference between two arrays.\nThe returned array is a copy of the original array, removing any items that\nalso appear in the second array. For example, `difference([\"a\",\"b\",\"c\"],[\"b\",\"c\",\"d\"])` returns [\"a\"].\n\n* `dirname`: Returns the `dirname` of a path. For example, `dirname('/path/to/a/file.ext')` returns '/path/to/a'.\n\n* `downcase`: Converts the case of a string or of all strings in an array to lowercase. *Type*: rvalue\n\n* `empty`: Returns 'true' if the variable is empty. *Type*: rvalue\n\n* `ensure_packages`: Takes a list of packages and only installs them if they don't already exist. It optionally takes a hash as a second parameter to be passed as the third argument to the `ensure_resource()` function. *Type*: statement\n\n* `ensure_resource`: Takes a resource type, title, and a list of attributes that describe a resource.\n\n  ```\n  user { 'dan':\n    ensure => present,\n  }\n  ```\n\n  This example only creates the resource if it does not already exist:\n\n    `ensure_resource('user', 'dan', {'ensure' => 'present' })`\n\n  If the resource already exists, but does not match the specified parameters, this function attempts to recreate the resource, leading to a duplicate resource definition error.\n\n  An array of resources can also be passed in, and each will be created with the type and parameters specified if it doesn't already exist.\n\n  `ensure_resource('user', ['dan','alex'], {'ensure' => 'present'})`\n\n  *Type*: statement\n\n* `flatten`: This function flattens any deeply nested arrays and returns a single flat array as a result. For example, `flatten(['a', ['b', ['c']]])` returns ['a','b','c']. *Type*: rvalue\n\n* `floor`: Returns the largest integer less than or equal to the argument.\nTakes a single numeric value as an argument. *Type*: rvalue\n\n* `fqdn_rotate`: Rotates an array a random number of times based on a node's fqdn. *Type*: rvalue\n\n* `get_module_path`: Returns the absolute path of the specified module for the current environment.\n\n  `$module_path = get_module_path('stdlib')`\n\n  *Type*: rvalue\n\n* `getparam`: Takes a resource reference and the name of the parameter and\nreturns the value of the resource's parameter. For example, the following code returns 'param_value'.\n\n  *Example:*\n\n  ```\n  define example_resource($param) {\n  }\n\n  example_resource { \"example_resource_instance\":\n    param => \"param_value\"\n  }\n\n  getparam(Example_resource[\"example_resource_instance\"], \"param\")\n  ```\n\n  *Type*: rvalue\n\n* `getvar`: Lookup a variable in a remote namespace.\n\n  For example:\n\n  ```\n  $foo = getvar('site::data::foo')\n  # Equivalent to $foo = $site::data::foo\n  ```\n\n  This is useful if the namespace itself is stored in a string:\n\n  ```\n  $datalocation = 'site::data'\n  $bar = getvar(\"${datalocation}::bar\")\n  # Equivalent to $bar = $site::data::bar\n  ```\n\n  *Type*: rvalue\n\n* `grep`: This function searches through an array and returns any elements that match the provided regular expression. For example, `grep(['aaa','bbb','ccc','aaaddd'], 'aaa')` returns ['aaa','aaaddd']. *Type*: rvalue\n\n* `has_interface_with`: Returns boolean based on kind and value:\n  * macaddress\n  * netmask\n  * ipaddress\n  * network\n\n  *Examples:*\n\n  ```\n  has_interface_with(\"macaddress\", \"x:x:x:x:x:x\")\n  has_interface_with(\"ipaddress\", \"127.0.0.1\")    => true\n  ```\n    \n  If no kind is given, then the presence of the interface is checked:\n\n  ```\n  has_interface_with(\"lo\")                        => true\n  ```\n\n  *Type*: rvalue\n\n* `has_ip_address`: Returns true if the client has the requested IP address on some interface. This function iterates through the `interfaces` fact and checks the `ipaddress_IFACE` facts, performing a simple string comparison. *Type*: rvalue\n\n* `has_ip_network`: Returns true if the client has an IP address within the requested network. This function iterates through the 'interfaces' fact and checks the 'network_IFACE' facts, performing a simple string comparision. *Type*: rvalue\n\n* `has_key`: Determine if a hash has a certain key value.\n\n  *Example*:\n\n  ```\n  $my_hash = {'key_one' => 'value_one'}\n  if has_key($my_hash, 'key_two') {\n    notice('we will not reach here')\n  }\n  if has_key($my_hash, 'key_one') {\n    notice('this will be printed')\n  }\n  ```\n  \n  *Type*: rvalue\n\n* `hash`: This function converts an array into a hash. For example, `hash(['a',1,'b',2,'c',3])` returns {'a'=>1,'b'=>2,'c'=>3}. *Type*: rvalue\n\n* `intersection`: This function returns an array an intersection of two. For example, `intersection([\"a\",\"b\",\"c\"],[\"b\",\"c\",\"d\"])` returns [\"b\",\"c\"].\n\n* `is_array`: Returns 'true' if the variable passed to this function is an array. *Type*: rvalue\n\n* `is_bool`: Returns 'true' if the variable passed to this function is a boolean. *Type*: rvalue\n\n* `is_domain_name`: Returns 'true' if the string passed to this function is a syntactically correct domain name. *Type*: rvalue\n\n* `is_float`: Returns 'true' if the variable passed to this function is a float. *Type*: rvalue\n\n* `is_function_available`: This function accepts a string as an argument and determines whether the Puppet runtime has access to a function by that name. It returns 'true' if the function exists, 'false' if not. *Type*: rvalue\n\n* `is_hash`: Returns 'true' if the variable passed to this function is a hash. *Type*: rvalue\n\n* `is_integer`: Returns 'true' if the variable returned to this string is an integer. *Type*: rvalue\n\n* `is_ip_address`: Returns 'true' if the string passed to this function is a valid IP address. *Type*: rvalue\n\n* `is_mac_address`: Returns 'true' if the string passed to this function is a valid MAC address. *Type*: rvalue\n\n* `is_numeric`: Returns 'true' if the variable passed to this function is a number. *Type*: rvalue\n\n* `is_string`: Returns 'true' if the variable passed to this function is a string. *Type*: rvalue\n\n* `join`: This function joins an array into a string using a separator. For example, `join(['a','b','c'], \",\")` results in: \"a,b,c\". *Type*: rvalue\n\n* `join_keys_to_values`: This function joins each key of a hash to that key's corresponding value with a separator. Keys and values are cast to strings. The return value is an array in which each element is one joined key/value pair. For example, `join_keys_to_values({'a'=>1,'b'=>2}, \" is \")` results in [\"a is 1\",\"b is 2\"]. *Type*: rvalue\n\n* `keys`: Returns the keys of a hash as an array. *Type*: rvalue\n\n* `loadyaml`: Load a YAML file containing an array, string, or hash, and return the data in the corresponding native data type. For example:\n\n  ```\n  $myhash = loadyaml('/etc/puppet/data/myhash.yaml')\n  ```\n\n  *Type*: rvalue\n\n* `lstrip`: Strips leading spaces to the left of a string. *Type*: rvalue\n\n* `max`: Returns the highest value of all arguments. Requires at least one argument. *Type*: rvalue\n\n* `member`: This function determines if a variable is a member of an array. The variable can be either a string, array, or fixnum. For example, `member(['a','b'], 'b')` and `member(['a','b','c'], ['b','c'])` return 'true', while `member(['a','b'], 'c')`  and `member(['a','b','c'], ['c','d'])` return 'false'. *Type*: rvalue\n\n* `merge`: Merges two or more hashes together and returns the resulting hash.\n\n  *Example*:\n  \n  ```\n  $hash1 = {'one' => 1, 'two' => 2}\n  $hash2 = {'two' => 'dos', 'three' => 'tres'}\n  $merged_hash = merge($hash1, $hash2)\n  # The resulting hash is equivalent to:\n  # $merged_hash =  {'one' => 1, 'two' => 'dos', 'three' => 'tres'}\n  ```\n  \n  When there is a duplicate key, the key in the rightmost hash \"wins.\" *Type*: rvalue\n\n* `min`: Returns the lowest value of all arguments. Requires at least one argument. *Type*: rvalue\n\n* `num2bool`: This function converts a number or a string representation of a number into a true boolean. Zero or anything non-numeric becomes 'false'. Numbers greater than 0 become 'true'. *Type*: rvalue\n\n* `parsejson`: This function accepts JSON as a string and converts into the correct Puppet structure. *Type*: rvalue\n\n* `parseyaml`: This function accepts YAML as a string and converts it into the correct Puppet structure. *Type*: rvalue\n\n* `pick`: From a list of values, returns the first value that is not undefined or an empty string. Takes any number of arguments, and raises an error if all values are undefined or empty.\n\n  ```\n  $real_jenkins_version = pick($::jenkins_version, '1.449')\n  ```\n  \n *Type*: rvalue\n\n* `prefix`: This function applies a prefix to all elements in an array. For example, `prefix(['a','b','c'], 'p')` returns ['pa','pb','pc']. *Type*: rvalue\n\n\n* `private`: This function sets the current class or definition as private.\nCalling the class or definition from outside the current module will fail. For example, `private()` called in class `foo::bar` outputs the following message if class is called from outside module `foo`:\n\n  ```\n  Class foo::bar is private\n  ```\n  \n  You can specify the error message you want to use:\n  \n  ```\n  private(\"You're not supposed to do that!\")\n  ```\n\n  *Type*: statement\n\n* `range`: When given range in the form of '(start, stop)', `range` extrapolates a range as an array. For example, `range(\"0\", \"9\")` returns [0,1,2,3,4,5,6,7,8,9]. Zero-padded strings are converted to integers automatically, so `range(\"00\", \"09\")` returns [0,1,2,3,4,5,6,7,8,9].\n\n  Non-integer strings are accepted; `range(\"a\", \"c\")` returns [\"a\",\"b\",\"c\"], and `range(\"host01\", \"host10\")` returns [\"host01\", \"host02\", ..., \"host09\", \"host10\"]. \n  \n  *Type*: rvalue\n\n* `reject`: This function searches through an array and rejects all elements that match the provided regular expression. For example, `reject(['aaa','bbb','ccc','aaaddd'], 'aaa')` returns ['bbb','ccc']. *Type*: rvalue\n\n* `reverse`: Reverses the order of a string or array. *Type*: rvalue\n\n* `rstrip`: Strips leading spaces to the right of the string.*Type*: rvalue\n\n* `shuffle`: Randomizes the order of a string or array elements. *Type*: rvalue\n\n* `size`: Returns the number of elements in a string or array. *Type*: rvalue\n\n* `sort`: Sorts strings and arrays lexically. *Type*: rvalue\n\n* `squeeze`: Returns a new string where runs of the same character that occur in this set are replaced by a single character. *Type*: rvalue\n\n* `str2bool`: This converts a string to a boolean. This attempts to convert strings that contain values such as '1', 't', 'y', and 'yes' to 'true' and strings that contain values such as '0', 'f', 'n', and 'no' to 'false'. *Type*: rvalue\n\n* `str2saltedsha512`: This converts a string to a salted-SHA512 password hash, used for OS X versions >= 10.7. Given any string, this function returns a hex version of a salted-SHA512 password hash, which can be inserted into your Puppet\nmanifests as a valid password attribute. *Type*: rvalue\n\n* `strftime`: This function returns formatted time. For example,  `strftime(\"%s\")` returns the time since epoch, and `strftime(\"%Y=%m-%d\")` returns the date. *Type*: rvalue\n\n  *Format:*\n  \n    * `%a`: The abbreviated weekday name ('Sun')\n    * `%A`: The  full  weekday  name ('Sunday')\n    * `%b`: The abbreviated month name ('Jan')\n    * `%B`: The  full  month  name ('January')\n    * `%c`: The preferred local date and time representation\n    * `%C`: Century (20 in 2009)\n    * `%d`: Day of the month (01..31)\n    * `%D`: Date (%m/%d/%y)\n    * `%e`: Day of the month, blank-padded ( 1..31)\n    * `%F`: Equivalent to %Y-%m-%d (the ISO 8601 date format)\n    * `%h`: Equivalent to %b\n    * `%H`: Hour of the day, 24-hour clock (00..23)\n    * `%I`: Hour of the day, 12-hour clock (01..12)\n    * `%j`: Day of the year (001..366)\n    * `%k`: Hour, 24-hour clock, blank-padded ( 0..23)\n    * `%l`: Hour, 12-hour clock, blank-padded ( 0..12)\n    * `%L`: Millisecond of the second (000..999)\n    * `%m`: Month of the year (01..12)\n    * `%M`: Minute of the hour (00..59)\n    * `%n`: Newline (\\n)\n    * `%N`: Fractional seconds digits, default is 9 digits (nanosecond)\n      * `%3N`: Millisecond (3 digits)\n      * `%6N`: Microsecond (6 digits)\n      * `%9N`: Nanosecond (9 digits)\n    * `%p`: Meridian indicator ('AM'  or  'PM')\n    * `%P`: Meridian indicator ('am'  or  'pm')\n    * `%r`: Time, 12-hour (same as %I:%M:%S %p)\n    * `%R`: Time, 24-hour (%H:%M)\n    * `%s`: Number of seconds since 1970-01-01 00:00:00 UTC.\n    * `%S`: Second of the minute (00..60)\n    * `%t`: Tab character (\t)\n    * `%T`: Time, 24-hour (%H:%M:%S)\n    * `%u`: Day of the week as a decimal, Monday being 1. (1..7)\n    * `%U`: Week  number  of the current year, starting with the first Sunday as the first day of the first week (00..53)\n    * `%v`: VMS date (%e-%b-%Y)\n    * `%V`: Week number of year according to ISO 8601 (01..53)\n    * `%W`: Week  number of the current year, starting with the first Monday as the first day of the first week (00..53)\n    * `%w`: Day of the week (Sunday is 0, 0..6)\n    * `%x`: Preferred representation for the date alone, no time\n    * `%X`: Preferred representation for the time alone, no date\n    * `%y`: Year without a century (00..99)\n    * `%Y`: Year with century\n    * `%z`: Time zone as  hour offset from UTC (e.g. +0900)\n    * `%Z`: Time zone name\n    * `%%`: Literal '%' character\n\n\n* `strip`: This function removes leading and trailing whitespace from a string or from every string inside an array. For example, `strip(\"    aaa   \")` results in \"aaa\". *Type*: rvalue\n\n* `suffix`: This function applies a suffix to all elements in an array. For example, `suffix(['a','b','c'], 'p')` returns ['ap','bp','cp']. *Type*: rvalue\n\n* `swapcase`: This function swaps the existing case of a string. For example, `swapcase(\"aBcD\")` results in \"AbCd\". *Type*: rvalue\n\n* `time`: This function returns the current time since epoch as an integer. For example, `time()` returns something like '1311972653'. *Type*: rvalue\n\n* `to_bytes`: Converts the argument into bytes, for example 4 kB becomes 4096.\nTakes a single string value as an argument. *Type*: rvalue\n\n* `type`: Returns the type when passed a variable. Type can be a string, array, hash, float, integer, or boolean. *Type*: rvalue\n\n* `union`: This function returns a union of two arrays. For example, `union([\"a\",\"b\",\"c\"],[\"b\",\"c\",\"d\"])` returns [\"a\",\"b\",\"c\",\"d\"].\n\n* `unique`: This function removes duplicates from strings and arrays. For example, `unique(\"aabbcc\")` returns 'abc'.\n\nYou can also use this with arrays. For example, `unique([\"a\",\"a\",\"b\",\"b\",\"c\",\"c\"])` returns [\"a\",\"b\",\"c\"]. *Type*: rvalue\n\n* `upcase`: Converts a string or an array of strings to uppercase. For example, `upcase(\"abcd\")` returns 'ABCD'. *Type*: rvalue\n\n* `uriescape`: Urlencodes a string or array of strings. Requires either a single string or an array as an input. *Type*: rvalue\n\n* `validate_absolute_path`: Validate that the string represents an absolute path in the filesystem. This function works for Windows and Unix-style paths.\n  The following values will pass:\n\n  ```\n  $my_path = \"C:/Program Files (x86)/Puppet Labs/Puppet\"\n  validate_absolute_path($my_path)\n  $my_path2 = \"/var/lib/puppet\"\n  validate_absolute_path($my_path2)\n  ```\n\n  The following values will fail, causing compilation to abort:\n\n  ```\n  validate_absolute_path(true)\n  validate_absolute_path([ 'var/lib/puppet', '/var/foo' ])\n  validate_absolute_path([ '/var/lib/puppet', 'var/foo' ])\n  $undefined = undef\n  validate_absolute_path($undefined)\n  ```\n  \n  *Type*: statement\n\n* `validate_array`: Validate that all passed values are array data structures. Abort catalog compilation if any value fails this check. \n\n  The following values will pass:\n\n  ```\n  $my_array = [ 'one', 'two' ]\n  validate_array($my_array)\n  ```\n\n  The following values will fail, causing compilation to abort:\n\n  ```\n  validate_array(true)\n  validate_array('some_string')\n  $undefined = undef\n  validate_array($undefined)\n  ```\n\n  *Type*: statement\n\n* `validate_augeas`: Performs validation of a string using an Augeas lens.\nThe first argument of this function should be the string to test, and the second argument should be the name of the Augeas lens to use. If Augeas fails to parse the string with the lens, the compilation aborts with a parse error.\n\n  A third optional argument lists paths which should **not** be found in the file. The `$file` variable points to the location of the temporary file being tested in the Augeas tree.\n\n  For example, to make sure your passwd content never contains user `foo`:\n\n  ```\n  validate_augeas($passwdcontent, 'Passwd.lns', ['$file/foo'])\n  ```\n  \n  To ensure that no users use the '/bin/barsh' shell:\n\n  ```\n  validate_augeas($passwdcontent, 'Passwd.lns', ['$file/*[shell=\"/bin/barsh\"]']\n  ```\n  \n  You can pass a fourth argument as the error message raised and shown to the user:\n\n  ```\n  validate_augeas($sudoerscontent, 'Sudoers.lns', [], 'Failed to validate sudoers content with Augeas')\n  ```\n\n  *Type*: statement\n\n* `validate_bool`: Validate that all passed values are either true or false. Abort catalog compilation if any value fails this check.\n\n  The following values will pass:\n  \n  ```\n  $iamtrue = true\n  validate_bool(true)\n  validate_bool(true, true, false, $iamtrue)\n  ```\n  \n  The following values will fail, causing compilation to abort:\n\n  ```\n  $some_array = [ true ]\n  validate_bool(\"false\")\n  validate_bool(\"true\")\n  validate_bool($some_array)\n  ```\n\n  *Type*: statement\n\n* `validate_cmd`: Performs validation of a string with an external command. The first argument of this function should be the string to test, and the second argument should be the path to a test command taking a file as last argument. If the command, launched against a tempfile containing the passed string, returns a non-null value, compilation aborts with a parse error.\n\n  You can pass a third argument as the error message raised and shown to the user:\n\n  ```\n  validate_cmd($sudoerscontent, '/usr/sbin/visudo -c -f', 'Visudo failed to validate sudoers content')\n  ```\n  \n  *Type*: statement\n\n* `validate_hash`: Validates that all passed values are hash data structures. Abort catalog compilation if any value fails this check.\n\n  The following values will pass:\n\n  ```\n  $my_hash = { 'one' => 'two' }\n  validate_hash($my_hash)\n  ```\n\n  The following values will fail, causing compilation to abort:\n\n  ```\n  validate_hash(true)\n  validate_hash('some_string')\n  $undefined = undef\n  validate_hash($undefined)\n  ```\n  \n  *Type*: statement\n\n* `validate_re`: Performs simple validation of a string against one or more regular expressions. The first argument of this function should be the string to\ntest, and the second argument should be a stringified regular expression\n(without the // delimiters) or an array of regular expressions. If none\nof the regular expressions match the string passed in, compilation aborts with a parse error.\n\n  You can pass a third argument as the error message raised and shown to the user.\n\n  The following strings validate against the regular expressions:\n\n  ```\n  validate_re('one', '^one$')\n  validate_re('one', [ '^one', '^two' ])\n  ```\n\n  The following string fails to validate, causing compilation to abort:\n\n  ```\n  validate_re('one', [ '^two', '^three' ])\n  ```\n\n  To set the error message: \n  \n  ```\n  validate_re($::puppetversion, '^2.7', 'The $puppetversion fact value does not match 2.7')\n  ```\n\n  *Type*: statement\n\n* `validate_slength`: Validates that the first argument is a string (or an array of strings), and is less than or equal to the length of the second argument. It fails if the first argument is not a string or array of strings, or if arg 2 is not convertable to a number.\n\n  The following values pass:\n  \n  ```\n  validate_slength(\"discombobulate\",17)\n  validate_slength([\"discombobulate\",\"moo\"],17)\n  ```\n  \n  The following values fail:\n\n  ```\n  validate_slength(\"discombobulate\",1)\n  validate_slength([\"discombobulate\",\"thermometer\"],5)\n  ```\n  \n  *Type*: statement\n\n* `validate_string`: Validates that all passed values are string data structures. Aborts catalog compilation if any value fails this check.\n\n  The following values pass:\n\n  ```\n  $my_string = \"one two\"\n  validate_string($my_string, 'three')\n  ```\n\n  The following values fail, causing compilation to abort:\n\n  ```\n  validate_string(true)\n  validate_string([ 'some', 'array' ])\n  $undefined = undef\n  validate_string($undefined)\n  ```\n\n  *Type*: statement\n\n* `values`: When given a hash, this function returns the values of that hash.\n\n  *Examples:*\n\n  ```\n  $hash = {\n    'a' => 1,\n    'b' => 2,\n    'c' => 3,\n  }\n  values($hash)\n  ```\n\n  The example above returns [1,2,3].\n\n  *Type*: rvalue\n\n* `values_at`: Finds value inside an array based on location. The first argument is the array you want to analyze, and the second element can be a combination of:\n\n  * A single numeric index\n  * A range in the form of 'start-stop' (eg. 4-9)\n  * An array combining the above\n\n  For example, `values_at(['a','b','c'], 2)` returns ['c']; `values_at(['a','b','c'], [\"0-1\"])` returns ['a','b']; and `values_at(['a','b','c','d','e'], [0, \"2-3\"])` returns ['a','c','d'].\n\n  *Type*: rvalue\n\n* `zip`: Takes one element from first array and merges corresponding elements from second array. This generates a sequence of n-element arrays, where n is one more than the count of arguments. For example, `zip(['1','2','3'],['4','5','6'])` results in [\"1\", \"4\"], [\"2\", \"5\"], [\"3\", \"6\"]. *Type*: rvalue\n\n##Limitations\n\nAs of Puppet Enterprise version 3.7, the stdlib module is no longer included in PE. PE users should install the most recent release of stdlib for compatibility with Puppet modules.\n\n###Version Compatibility\n\nVersions | Puppet 2.6 | Puppet 2.7 | Puppet 3.x | Puppet 4.x | \n:---------------|:-----:|:---:|:---:|:----:\n**stdlib 2.x**  | **yes** | **yes** | no | no\n**stdlib 3.x**  | no    | **yes**  | **yes** | no\n**stdlib 4.x**  | no    | **yes**  | **yes** | no\n**stdlib 5.x**  | no    | no  | **yes**  | **yes**\n\n**stdlib 5.x**: When released, stdlib 5.x will drop support for Puppet 2.7.x. Please see [this discussion](https://github.com/puppetlabs/puppetlabs-stdlib/pull/176#issuecomment-30251414).\n\n##Development\n\nPuppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.\n\nWe want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.\n\nYou can read the complete module contribution guide on the [Puppet Labs wiki](http://projects.puppetlabs.com/projects/module-site/wiki/Module_contributing).\n\nTo report or research a bug with any part of this module, please go to\n[http://tickets.puppetlabs.com/browse/PUP](http://tickets.puppetlabs.com/browse/PUP).\n\n##Contributors\n\nThe list of contributors can be found at: https://github.com/puppetlabs/puppetlabs-stdlib/graphs/contributors\n\n\n\n\n",
+    "changelog": "##2015-01-14 - Supported Release 4.5.1\n###Summary\n\nThis release changes the temporary facter_dot_d cache locations outside of the /tmp directory due to a possible security vunerability. CVE-2015-1029\n\n####Bugfixes\n- Facter_dot_d cache will now be stored in puppet libdir instead of tmp\n\n##2014-12-15 - Supported Release 4.5.0\n###Summary\n\nThis release improves functionality of the member function and adds improved future parser support.\n\n####Features\n- MODULES-1329: Update member() to allow the variable to be an array.\n- Sync .travis.yml, Gemfile, Rakefile, and CONTRIBUTING.md via modulesync\n\n####Bugfixes\n- Fix range() to work with numeric ranges with the future parser\n- Accurately express SLES support in metadata.json (was missing 10SP4 and 12)\n- Don't require `line` to match the `match` parameter\n\n##2014-11-10 - Supported Release 4.4.0\n###Summary\nThis release has an overhauled readme, new private manifest function, and fixes many future parser bugs.\n\n####Features\n- All new shiny README\n- New `private()` function for making private manifests (yay!)\n\n####Bugfixes\n- Code reuse in `bool2num()` and `zip()`\n- Fix many functions to handle `generate()` no longer returning a string on new puppets\n- `concat()` no longer modifies the first argument (whoops)\n- strict variable support for `getvar()`, `member()`, `values_at`, and `has_interface_with()`\n- `to_bytes()` handles PB and EB now\n- Fix `tempfile` ruby requirement for `validate_augeas()` and `validate_cmd()`\n- Fix `validate_cmd()` for windows\n- Correct `validate_string()` docs to reflect non-handling of `undef`\n- Fix `file_line` matching on older rubies\n\n\n##2014-07-15 - Supported Release 4.3.2\n###Summary\n\nThis release merely updates metadata.json so the module can be uninstalled and\nupgraded via the puppet module command.\n\n##2014-07-14 - Supported Release 4.3.1\n### Summary\nThis supported release updates the metadata.json to work around upgrade behavior of the PMT.\n\n#### Bugfixes\n- Synchronize metadata.json with PMT-generated metadata to pass checksums\n\n##2014-06-27 - Supported Release 4.3.0\n### Summary\nThis release is the first supported release of the stdlib 4 series. It remains\nbackwards-compatible with the stdlib 3 series. It adds two new functions, one bugfix, and many testing updates.\n\n#### Features\n- New `bool2str()` function\n- New `camalcase()` function\n\n#### Bugfixes\n- Fix `has_interface_with()` when interfaces fact is nil\n\n##2014-06-04 - Release 4.2.2\n### Summary\n\nThis release adds PE3.3 support in the metadata and fixes a few tests.\n\n## 2014-05-08 - Release - 4.2.1\n### Summary\nThis release moves a stray symlink that can cause problems.\n\n## 2014-05-08 - Release - 4.2.0\n### Summary\nThis release adds many new functions and fixes, and continues to be backwards compatible with stdlib 3.x\n\n#### Features\n- New `base64()` function\n- New `deep_merge()` function\n- New `delete_undef_values()` function\n- New `delete_values()` function\n- New `difference()` function\n- New `intersection()` function\n- New `is_bool()` function\n- New `pick_default()` function\n- New `union()` function\n- New `validate_ipv4_address` function\n- New `validate_ipv6_address` function\n- Update `ensure_packages()` to take an option hash as a second parameter.\n- Update `range()` to take an optional third argument for range step\n- Update `validate_slength()` to take an optional third argument for minimum length\n- Update `file_line` resource to take `after` and `multiple` attributes\n\n#### Bugfixes\n- Correct `is_string`, `is_domain_name`, `is_array`, `is_float`, and `is_function_available` for parsing odd types such as bools and hashes.\n- Allow facts.d facts to contain `=` in the value\n- Fix `root_home` fact on darwin systems\n- Fix `concat()` to work with a second non-array argument\n- Fix `floor()` to work with integer strings\n- Fix `is_integer()` to return true if passed integer strings\n- Fix `is_numeric()` to return true if passed integer strings\n- Fix `merge()` to work with empty strings\n- Fix `pick()` to raise the correct error type\n- Fix `uriescape()` to use the default URI.escape list\n- Add/update unit & acceptance tests.\n\n\n##2014-03-04 - Supported Release - 3.2.1\n###Summary\nThis is a supported release\n\n####Bugfixes\n- Fixed `is_integer`/`is_float`/`is_numeric` for checking the value of arithmatic expressions.\n\n####Known bugs\n* No known bugs\n\n---\n\n##### 2013-05-06 - Jeff McCune <jeff@puppetlabs.com> - 4.1.0\n\n * (#20582) Restore facter\\_dot\\_d to stdlib for PE users (3b887c8)\n * (maint) Update Gemfile with GEM\\_FACTER\\_VERSION (f44d535)\n\n##### 2013-05-06 - Alex Cline <acline@us.ibm.com> - 4.1.0\n\n * Terser method of string to array conversion courtesy of ethooz. (d38bce0)\n\n##### 2013-05-06 - Alex Cline <acline@us.ibm.com> 4.1.0\n\n * Refactor ensure\\_resource expectations (b33cc24)\n\n##### 2013-05-06 - Alex Cline <acline@us.ibm.com> 4.1.0\n\n * Changed str-to-array conversion and removed abbreviation. (de253db)\n\n##### 2013-05-03 - Alex Cline <acline@us.ibm.com> 4.1.0\n\n * (#20548) Allow an array of resource titles to be passed into the ensure\\_resource function (e08734a)\n\n##### 2013-05-02 - Raphaël Pinson <raphael.pinson@camptocamp.com> - 4.1.0\n\n * Add a dirname function (2ba9e47)\n\n##### 2013-04-29 - Mark Smith-Guerrero <msmithgu@gmail.com> - 4.1.0\n\n * (maint) Fix a small typo in hash() description (928036a)\n\n##### 2013-04-12 - Jeff McCune <jeff@puppetlabs.com> - 4.0.2\n\n * Update user information in gemspec to make the intent of the Gem clear.\n\n##### 2013-04-11 - Jeff McCune <jeff@puppetlabs.com> - 4.0.1\n\n * Fix README function documentation (ab3e30c)\n\n##### 2013-04-11 - Jeff McCune <jeff@puppetlabs.com> - 4.0.0\n\n * stdlib 4.0 drops support with Puppet 2.7\n * stdlib 4.0 preserves support with Puppet 3\n\n##### 2013-04-11 - Jeff McCune <jeff@puppetlabs.com> - 4.0.0\n\n * Add ability to use puppet from git via bundler (9c5805f)\n\n##### 2013-04-10 - Jeff McCune <jeff@puppetlabs.com> - 4.0.0\n\n * (maint) Make stdlib usable as a Ruby GEM (e81a45e)\n\n##### 2013-04-10 - Erik Dalén <dalen@spotify.com> - 4.0.0\n\n * Add a count function (f28550e)\n\n##### 2013-03-31 - Amos Shapira <ashapira@atlassian.com> - 4.0.0\n\n * (#19998) Implement any2array (7a2fb80)\n\n##### 2013-03-29 - Steve Huff <shuff@vecna.org> - 4.0.0\n\n * (19864) num2bool match fix (8d217f0)\n\n##### 2013-03-20 - Erik Dalén <dalen@spotify.com> - 4.0.0\n\n * Allow comparisons of Numeric and number as String (ff5dd5d)\n\n##### 2013-03-26 - Richard Soderberg <rsoderberg@mozilla.com> - 4.0.0\n\n * add suffix function to accompany the prefix function (88a93ac)\n\n##### 2013-03-19 - Kristof Willaert <kristof.willaert@gmail.com> - 4.0.0\n\n * Add floor function implementation and unit tests (0527341)\n\n##### 2012-04-03 - Eric Shamow <eric@puppetlabs.com> - 4.0.0\n\n * (#13610) Add is\\_function\\_available to stdlib (961dcab)\n\n##### 2012-12-17 - Justin Lambert <jlambert@eml.cc> - 4.0.0\n\n * str2bool should return a boolean if called with a boolean (5d5a4d4)\n\n##### 2012-10-23 - Uwe Stuehler <ustuehler@team.mobile.de> - 4.0.0\n\n * Fix number of arguments check in flatten() (e80207b)\n\n##### 2013-03-11 - Jeff McCune <jeff@puppetlabs.com> - 4.0.0\n\n * Add contributing document (96e19d0)\n\n##### 2013-03-04 - Raphaël Pinson <raphael.pinson@camptocamp.com> - 4.0.0\n\n * Add missing documentation for validate\\_augeas and validate\\_cmd to README.markdown (a1510a1)\n\n##### 2013-02-14 - Joshua Hoblitt <jhoblitt@cpan.org> - 4.0.0\n\n * (#19272) Add has\\_element() function (95cf3fe)\n\n##### 2013-02-07 - Raphaël Pinson <raphael.pinson@camptocamp.com> - 4.0.0\n\n * validate\\_cmd(): Use Puppet::Util::Execution.execute when available (69248df)\n\n##### 2012-12-06 - Raphaël Pinson <raphink@gmail.com> - 4.0.0\n\n * Add validate\\_augeas function (3a97c23)\n\n##### 2012-12-06 - Raphaël Pinson <raphink@gmail.com> - 4.0.0\n\n * Add validate\\_cmd function (6902cc5)\n\n##### 2013-01-14 - David Schmitt <david@dasz.at> - 4.0.0\n\n * Add geppetto project definition (b3fc0a3)\n\n##### 2013-01-02 - Jaka Hudoklin <jakahudoklin@gmail.com> - 4.0.0\n\n * Add getparam function to get defined resource parameters (20e0e07)\n\n##### 2013-01-05 - Jeff McCune <jeff@puppetlabs.com> - 4.0.0\n\n * (maint) Add Travis CI Support (d082046)\n\n##### 2012-12-04 - Jeff McCune <jeff@puppetlabs.com> - 4.0.0\n\n * Clarify that stdlib 3 supports Puppet 3 (3a6085f)\n\n##### 2012-11-30 - Erik Dalén <dalen@spotify.com> - 4.0.0\n\n * maint: style guideline fixes (7742e5f)\n\n##### 2012-11-09 - James Fryman <james@frymanet.com> - 4.0.0\n\n * puppet-lint cleanup (88acc52)\n\n##### 2012-11-06 - Joe Julian <me@joejulian.name> - 4.0.0\n\n * Add function, uriescape, to URI.escape strings. Redmine #17459 (fd52b8d)\n\n##### 2012-09-18 - Chad Metcalf <chad@wibidata.com> - 3.2.0\n\n * Add an ensure\\_packages function. (8a8c09e)\n\n##### 2012-11-23 - Erik DalÃƒÂ©n <dalen@spotify.com> - 3.2.0\n\n * (#17797) min() and max() functions (9954133)\n\n##### 2012-05-23 - Peter Meier <peter.meier@immerda.ch> - 3.2.0\n\n * (#14670) autorequire a file\\_line resource's path (dfcee63)\n\n##### 2012-11-19 - Joshua Harlan Lifton <lifton@puppetlabs.com> - 3.2.0\n\n * Add join\\_keys\\_to\\_values function (ee0f2b3)\n\n##### 2012-11-17 - Joshua Harlan Lifton <lifton@puppetlabs.com> - 3.2.0\n\n * Extend delete function for strings and hashes (7322e4d)\n\n##### 2012-08-03 - Gary Larizza <gary@puppetlabs.com> - 3.2.0\n\n * Add the pick() function (ba6dd13)\n\n##### 2012-03-20 - Wil Cooley <wcooley@pdx.edu> - 3.2.0\n\n * (#13974) Add predicate functions for interface facts (f819417)\n\n##### 2012-11-06 - Joe Julian <me@joejulian.name> - 3.2.0\n\n * Add function, uriescape, to URI.escape strings. Redmine #17459 (70f4a0e)\n\n##### 2012-10-25 - Jeff McCune <jeff@puppetlabs.com> - 3.1.1\n\n * (maint) Fix spec failures resulting from Facter API changes (97f836f)\n\n##### 2012-10-23 - Matthaus Owens <matthaus@puppetlabs.com> - 3.1.0\n\n * Add PE facts to stdlib (cdf3b05)\n\n##### 2012-08-16 - Jeff McCune <jeff@puppetlabs.com> - 3.0.1\n\n * Fix accidental removal of facts\\_dot\\_d.rb in 3.0.0 release\n\n##### 2012-08-16 - Jeff McCune <jeff@puppetlabs.com> - 3.0.0\n\n * stdlib 3.0 drops support with Puppet 2.6\n * stdlib 3.0 preserves support with Puppet 2.7\n\n##### 2012-08-07 - Dan Bode <dan@puppetlabs.com> - 3.0.0\n\n * Add function ensure\\_resource and defined\\_with\\_params (ba789de)\n\n##### 2012-07-10 - Hailee Kenney <hailee@puppetlabs.com> - 3.0.0\n\n * (#2157) Remove facter\\_dot\\_d for compatibility with external facts (f92574f)\n\n##### 2012-04-10 - Chris Price <chris@puppetlabs.com> - 3.0.0\n\n * (#13693) moving logic from local spec\\_helper to puppetlabs\\_spec\\_helper (85f96df)\n\n##### 2012-10-25 - Jeff McCune <jeff@puppetlabs.com> - 2.5.1\n\n * (maint) Fix spec failures resulting from Facter API changes (97f836f)\n\n##### 2012-10-23 - Matthaus Owens <matthaus@puppetlabs.com> - 2.5.0\n\n * Add PE facts to stdlib (cdf3b05)\n\n##### 2012-08-15 - Dan Bode <dan@puppetlabs.com> - 2.5.0\n\n * Explicitly load functions used by ensure\\_resource (9fc3063)\n\n##### 2012-08-13 - Dan Bode <dan@puppetlabs.com> - 2.5.0\n\n * Add better docs about duplicate resource failures (97d327a)\n\n##### 2012-08-13 - Dan Bode <dan@puppetlabs.com> - 2.5.0\n\n * Handle undef for parameter argument (4f8b133)\n\n##### 2012-08-07 - Dan Bode <dan@puppetlabs.com> - 2.5.0\n\n * Add function ensure\\_resource and defined\\_with\\_params (a0cb8cd)\n\n##### 2012-08-20 - Jeff McCune <jeff@puppetlabs.com> - 2.5.0\n\n * Disable tests that fail on 2.6.x due to #15912 (c81496e)\n\n##### 2012-08-20 - Jeff McCune <jeff@puppetlabs.com> - 2.5.0\n\n * (Maint) Fix mis-use of rvalue functions as statements (4492913)\n\n##### 2012-08-20 - Jeff McCune <jeff@puppetlabs.com> - 2.5.0\n\n * Add .rspec file to repo root (88789e8)\n\n##### 2012-06-07 - Chris Price <chris@puppetlabs.com> - 2.4.0\n\n * Add support for a 'match' parameter to file\\_line (a06c0d8)\n\n##### 2012-08-07 - Erik DalÃƒÂ©n <dalen@spotify.com> - 2.4.0\n\n * (#15872) Add to\\_bytes function (247b69c)\n\n##### 2012-07-19 - Jeff McCune <jeff@puppetlabs.com> - 2.4.0\n\n * (Maint) use PuppetlabsSpec::PuppetInternals.scope (master) (deafe88)\n\n##### 2012-07-10 - Hailee Kenney <hailee@puppetlabs.com> - 2.4.0\n\n * (#2157) Make facts\\_dot\\_d compatible with external facts (5fb0ddc)\n\n##### 2012-03-16 - Steve Traylen <steve.traylen@cern.ch> - 2.4.0\n\n * (#13205) Rotate array/string randomley based on fqdn, fqdn\\_rotate() (fef247b)\n\n##### 2012-05-22 - Peter Meier <peter.meier@immerda.ch> - 2.3.3\n\n * fix regression in #11017 properly (f0a62c7)\n\n##### 2012-05-10 - Jeff McCune <jeff@puppetlabs.com> - 2.3.3\n\n * Fix spec tests using the new spec\\_helper (7d34333)\n\n##### 2012-05-10 - Puppet Labs <support@puppetlabs.com> - 2.3.2\n\n * Make file\\_line default to ensure => present (1373e70)\n * Memoize file\\_line spec instance variables (20aacc5)\n * Fix spec tests using the new spec\\_helper (1ebfa5d)\n * (#13595) initialize\\_everything\\_for\\_tests couples modules Puppet ver (3222f35)\n * (#13439) Fix MRI 1.9 issue with spec\\_helper (15c5fd1)\n * (#13439) Fix test failures with Puppet 2.6.x (665610b)\n * (#13439) refactor spec helper for compatibility with both puppet 2.7 and master (82194ca)\n * (#13494) Specify the behavior of zero padded strings (61891bb)\n\n##### 2012-03-29 Puppet Labs <support@puppetlabs.com> - 2.1.3\n\n* (#11607) Add Rakefile to enable spec testing\n* (#12377) Avoid infinite loop when retrying require json\n\n##### 2012-03-13 Puppet Labs <support@puppetlabs.com> - 2.3.1\n\n* (#13091) Fix LoadError bug with puppet apply and puppet\\_vardir fact\n\n##### 2012-03-12 Puppet Labs <support@puppetlabs.com> - 2.3.0\n\n* Add a large number of new Puppet functions\n* Backwards compatibility preserved with 2.2.x\n\n##### 2011-12-30 Puppet Labs <support@puppetlabs.com> - 2.2.1\n\n* Documentation only release for the Forge\n\n##### 2011-12-30 Puppet Labs <support@puppetlabs.com> - 2.1.2\n\n* Documentation only release for PE 2.0.x\n\n##### 2011-11-08 Puppet Labs <support@puppetlabs.com> - 2.2.0\n\n* #10285 - Refactor json to use pson instead.\n* Maint  - Add watchr autotest script\n* Maint  - Make rspec tests work with Puppet 2.6.4\n* #9859  - Add root\\_home fact and tests\n\n##### 2011-08-18 Puppet Labs <support@puppetlabs.com> - 2.1.1\n\n* Change facts.d paths to match Facter 2.0 paths.\n* /etc/facter/facts.d\n* /etc/puppetlabs/facter/facts.d\n\n##### 2011-08-17 Puppet Labs <support@puppetlabs.com> - 2.1.0\n\n* Add R.I. Pienaar's facts.d custom facter fact\n* facts defined in /etc/facts.d and /etc/puppetlabs/facts.d are\n  automatically loaded now.\n\n##### 2011-08-04 Puppet Labs <support@puppetlabs.com> - 2.0.0\n\n* Rename whole\\_line to file\\_line\n* This is an API change and as such motivating a 2.0.0 release according to semver.org.\n\n##### 2011-08-04 Puppet Labs <support@puppetlabs.com> - 1.1.0\n\n* Rename append\\_line to whole\\_line\n* This is an API change and as such motivating a 1.1.0 release.\n\n##### 2011-08-04 Puppet Labs <support@puppetlabs.com> - 1.0.0\n\n* Initial stable release\n* Add validate\\_array and validate\\_string functions\n* Make merge() function work with Ruby 1.8.5\n* Add hash merging function\n* Add has\\_key function\n* Add loadyaml() function\n* Add append\\_line native\n\n##### 2011-06-21 Jeff McCune <jeff@puppetlabs.com> - 0.1.7\n\n* Add validate\\_hash() and getvar() functions\n\n##### 2011-06-15 Jeff McCune <jeff@puppetlabs.com> - 0.1.6\n\n* Add anchor resource type to provide containment for composite classes\n\n##### 2011-06-03 Jeff McCune <jeff@puppetlabs.com> - 0.1.5\n\n* Add validate\\_bool() function to stdlib\n\n##### 0.1.4 2011-05-26 Jeff McCune <jeff@puppetlabs.com>\n\n* Move most stages after main\n\n##### 0.1.3 2011-05-25 Jeff McCune <jeff@puppetlabs.com>\n\n* Add validate\\_re() function\n\n##### 0.1.2 2011-05-24 Jeff McCune <jeff@puppetlabs.com>\n\n* Update to add annotated tag\n\n##### 0.1.1 2011-05-24 Jeff McCune <jeff@puppetlabs.com>\n\n* Add stdlib::stages class with a standard set of stages\n",
+    "license": "Copyright (C) 2011 Puppet Labs Inc\n\nand some parts:\n\nCopyright (C) 2011 Krzysztof Wilczynski\n\nPuppet Labs can be contacted at: info@puppetlabs.com\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n",
+    "created_at": "2015-01-14 16:41:51 -0800",
+    "updated_at": "2015-02-04 14:28:36 -0800",
+    "deleted_at": null
+  },
+  "releases": [
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.5.1",
+      "version": "4.5.1",
+      "supported": false,
+      "created_at": "2015-01-14 16:41:51 -0800"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.5.0",
+      "version": "4.5.0",
+      "supported": false,
+      "created_at": "2014-12-16 17:30:36 -0800"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.4.0",
+      "version": "4.4.0",
+      "supported": false,
+      "created_at": "2014-11-12 11:53:15 -0800"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.3.2",
+      "version": "4.3.2",
+      "supported": true,
+      "created_at": "2014-07-16 14:12:27 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.3.0",
+      "version": "4.3.0",
+      "supported": true,
+      "created_at": "2014-07-14 11:46:37 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.2.2",
+      "version": "4.2.2",
+      "supported": false,
+      "created_at": "2014-06-04 11:23:42 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.2.1",
+      "version": "4.2.1",
+      "supported": false,
+      "created_at": "2014-05-09 08:00:10 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.2.0",
+      "version": "4.2.0",
+      "supported": false,
+      "created_at": "2014-05-08 16:34:47 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-4.1.0",
+      "version": "4.1.0",
+      "supported": false,
+      "created_at": "2013-05-13 08:31:19 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-3.2.2",
+      "version": "3.2.2",
+      "supported": false,
+      "created_at": "2014-06-04 11:32:15 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-3.2.1",
+      "version": "3.2.1",
+      "supported": true,
+      "created_at": "2014-03-03 17:47:37 -0800"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-3.2.0",
+      "version": "3.2.0",
+      "supported": false,
+      "created_at": "2012-11-28 14:53:03 -0800"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-3.1.1",
+      "version": "3.1.1",
+      "supported": false,
+      "created_at": "2012-10-25 23:17:24 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-3.1.0",
+      "version": "3.1.0",
+      "supported": false,
+      "created_at": "2012-10-25 23:18:03 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-3.0.1",
+      "version": "3.0.1",
+      "supported": false,
+      "created_at": "2012-08-17 02:53:36 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-3.0.0",
+      "version": "3.0.0",
+      "supported": false,
+      "created_at": "2012-08-16 18:24:28 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.6.0",
+      "version": "2.6.0",
+      "supported": false,
+      "created_at": "2012-11-28 14:52:00 -0800"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.5.1",
+      "version": "2.5.1",
+      "supported": false,
+      "created_at": "2012-10-25 23:18:20 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.5.0",
+      "version": "2.5.0",
+      "supported": false,
+      "created_at": "2012-10-25 23:18:35 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.4.0",
+      "version": "2.4.0",
+      "supported": false,
+      "created_at": "2012-08-14 17:26:40 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.3.3",
+      "version": "2.3.3",
+      "supported": false,
+      "created_at": "2012-05-23 17:54:18 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.3.2",
+      "version": "2.3.2",
+      "supported": false,
+      "created_at": "2012-05-11 05:21:34 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.3.1",
+      "version": "2.3.1",
+      "supported": false,
+      "created_at": "2012-03-14 00:49:14 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.3.0",
+      "version": "2.3.0",
+      "supported": false,
+      "created_at": "2012-03-13 00:48:05 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.2.1",
+      "version": "2.2.1",
+      "supported": false,
+      "created_at": "2011-12-30 20:24:19 -0800"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.2.0",
+      "version": "2.2.0",
+      "supported": false,
+      "created_at": "2011-11-08 22:31:36 -0800"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.1.3",
+      "version": "2.1.3",
+      "supported": false,
+      "created_at": "2012-03-29 16:46:30 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-2.0.0",
+      "version": "2.0.0",
+      "supported": false,
+      "created_at": "2011-08-08 18:16:39 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-1.1.0",
+      "version": "1.1.0",
+      "supported": false,
+      "created_at": "2011-08-05 01:37:38 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-1.0.0",
+      "version": "1.0.0",
+      "supported": false,
+      "created_at": "2011-08-05 00:32:10 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-0.1.7",
+      "version": "0.1.7",
+      "supported": false,
+      "created_at": "2011-06-22 00:09:36 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-0.1.6",
+      "version": "0.1.6",
+      "supported": false,
+      "created_at": "2011-06-15 18:55:45 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-0.1.5",
+      "version": "0.1.5",
+      "supported": false,
+      "created_at": "2011-06-03 18:46:49 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-0.1.4",
+      "version": "0.1.4",
+      "supported": false,
+      "created_at": "2011-05-26 17:27:38 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-0.1.3",
+      "version": "0.1.3",
+      "supported": false,
+      "created_at": "2011-05-25 20:35:05 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-0.1.2",
+      "version": "0.1.2",
+      "supported": false,
+      "created_at": "2011-05-24 18:51:49 -0700"
+    },
+    {
+      "uri": "/v3/releases/puppetlabs-stdlib-0.1.1",
+      "version": "0.1.1",
+      "supported": false,
+      "created_at": "2011-05-24 18:35:35 -0700"
+    }
+  ],
+  "feedback_score": 99,
+  "homepage_url": "https://github.com/puppetlabs/puppetlabs-stdlib",
+  "issues_url": "https://tickets.puppetlabs.com/browse/MODULES"
+}
