@@ -77,7 +77,7 @@ module PuppetLibrary
 
         get "/v3/modules" do
             search_term = params[:query]
-            @forge.search_modules(search_term).to_json
+            @forge.get_modules(search_term).to_json
         end
 
         get "/v3/releases" do
@@ -86,9 +86,12 @@ module PuppetLibrary
             end
 
             author, module_name = params[:module].split %r{[/-]}
-            version = params[:version]
+            if params[:version]
+                halt 400, {"error" => "Use /v3/releases/#{author}-#{module_name}-#{params[:version]} to query for specific release"}.to_json
+            end
+
             begin
-                @forge.get_module_metadata_with_dependencies(author, module_name, version).to_json
+                @forge.get_releases(author, module_name).to_json
             rescue Forge::ModuleNotFound
                 halt 410, {"error" => "No release found for #{params[:module]}"}.to_json
             end

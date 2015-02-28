@@ -217,7 +217,7 @@ module PuppetLibrary
         describe "puppet module search" do
             let(:search_results) { JSON.parse(File.read('spec/fixtures/modules.json')) }
             it "gets metadata for module and dependencies" do
-                expect(forge).to receive(:search_modules).with("apache").and_return(search_results)
+                expect(forge).to receive(:get_modules).with("apache").and_return(search_results)
 
                 get "/v3/modules?query=apache"
 
@@ -229,7 +229,7 @@ module PuppetLibrary
         describe "puppet module fetch" do
             let(:metadata) { JSON.parse(File.read('spec/fixtures/releases.json')) }
             it "gets metadata for module and dependencies" do
-                expect(forge).to receive(:get_module_metadata_with_dependencies).with("puppetlabs", "apache", nil).and_return(metadata)
+                expect(forge).to receive(:get_releases).with("puppetlabs", "apache").and_return(metadata)
 
                 get "/v3/releases?module=puppetlabs-apache"
 
