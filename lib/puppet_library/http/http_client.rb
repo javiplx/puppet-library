@@ -18,6 +18,9 @@
 require 'open-uri'
 
 module PuppetLibrary::Http
+
+    USER_AGENT = "PuppetLibrary/#{PuppetLibrary::VERSION} (OpenURI)".freeze
+
     class HttpClient
         def get(url)
             open_uri(url).read
@@ -28,8 +31,15 @@ module PuppetLibrary::Http
         end
 
         private
+        def user_agent
+            [
+	        USER_AGENT,
+	        "Ruby/#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL} (#{RUBY_PLATFORM})"
+            ].join(' ').freeze
+        end
+
         def open_uri(url)
-            open(url)
+            open(url, "User-Agent" => user_agent)
         end
     end
 end
