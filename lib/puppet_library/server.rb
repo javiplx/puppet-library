@@ -80,6 +80,16 @@ module PuppetLibrary
             @forge.get_modules(search_term).to_json
         end
 
+        get "/v3/modules/:user-:module" do
+            author = params[:user]
+            module_name = params[:module]
+            begin
+                @forge.get_module(author, module_name).to_json
+            rescue Forge::ModuleNotFound
+                halt 404, {"error" => "Could not find module \"#{module_name}\""}.to_json
+            end
+        end
+
         get "/v3/releases" do
             unless params[:module]
                 halt 400, {"error" => "The number of version constraints in the query does not match the number of module names"}.to_json
@@ -94,6 +104,18 @@ module PuppetLibrary
                 @forge.get_releases(author, module_name).to_json
             rescue Forge::ModuleNotFound
                 halt 410, {"error" => "No release found for #{params[:module]}"}.to_json
+            end
+        end
+
+        get "/v3/releases/:user-:module-:version" do
+            author = params[:user]
+            module_name = params[:module]
+            version = params[:version]
+
+            begin
+                @forge.get_release(author, module_name, version).to_json
+            rescue Forge::ModuleNotFound
+                halt 410, {"error" => "Release for #{author}-#{module_name}-#{version} not found"}.to_json
             end
         end
 
