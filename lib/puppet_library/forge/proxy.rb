@@ -20,6 +20,7 @@ require 'puppet_library/http/http_client'
 require 'puppet_library/http/cache/in_memory'
 require 'puppet_library/http/cache/noop'
 require 'puppet_library/util/config_api'
+require 'addressable/uri'
 
 module PuppetLibrary::Forge
 
@@ -31,7 +32,7 @@ module PuppetLibrary::Forge
     #        # The URL of the remote forge
     #        url "http://forge.example.com"
     #    end
-    class Proxy < Forge
+    class Proxy < Abstract
 
         def self.configure(&block)
             config_api = PuppetLibrary::Util::ConfigApi.for(Proxy) do
@@ -54,80 +55,78 @@ module PuppetLibrary::Forge
             @download_cache.clear
         end
 
-        def search_modules(query)
-            query_parameter = query.nil? ? "" : "?q=#{query}"
-            results = get("/modules.json#{query_parameter}")
-            JSON.parse results
-        end
-
-        def get_module_buffer(author, name, version)
+        def search_modules(params)
+            query_params = construct_url params
+            url = "/v3/modules?#{query_params}"
             begin
-                version_info = get_module_version(author, name, version)
-                raise ModuleNotFound if version_info.nil?
-                download_module(author, name, version, version_info["file"])
-            rescue OpenURI::HTTPError
+                raw_results = get_all_pages(url)
+            rescue ::OpenURI::HTTPError
                 raise ModuleNotFound
             end
+            modules = []
+            raw_results.each do |result|
+                modules << PuppetLibrary::PuppetModule::Module.new_from_module_metadata(result)
+            end
+            modules
+        end
+
+        def search_releases(params)
+            query_params = construct_url params
+            url = "/v3/releases?#{query_params}"
+            begin
+                raw_results = get_all_pages(url)
+            rescue ::OpenURI::HTTPError
+                raise ModuleNotFound
+            end
+            releases = []
+            raw_results.each do |result|
+                releases << PuppetLibrary::PuppetModule::Release.new_from_release_metadata(result)
+            end
+            releases
         end
 
         def get_module_metadata(author, name)
             begin
-                response = get("/#{author}/#{name}.json")
-                JSON.parse(response)
+                url = "/v3/modules/#{author}-#{name}"
+                result = JSON.parse(get url)
+                PuppetLibrary::PuppetModule::Module.new_from_module_metadata(result)
+            rescue ::OpenURI::HTTPError
+                raise ModuleNotFound
+            end
+        end
+
+        def get_release_metadata(author, name, version)
+            begin
+                url = "/v3/releases/#{author}-#{name}-#{version}"
+                result = JSON.parse(get url)
+                PuppetLibrary::PuppetModule::Release.new_from_release_metadata(result)
+            rescue ::OpenURI::HTTPError
+                raise ModuleNotFound
+            end
+        end
+
+        def get_module_buffer(author, name, version)
+            begin
+                download_module(author, name, version)
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
             end
         end
 
-        def get_module_metadata_with_dependencies(author, name, version)
-            begin
-                look_up_releases(author, name, version) do |full_name, release_info|
-                    release_info["file"] = module_path_for(full_name, release_info["version"])
-                end
-            rescue OpenURI::HTTPError
-                raise ModuleNotFound
-            end
+        def construct_url(params)
+            uri = ::Addressable::URI.new
+            uri.query_values = params
+            uri.query
         end
 
         private
-        def get_module_version(author, name, version)
-            module_versions = get_module_versions(author, name)
-            module_versions.find do |version_info|
-                version_info["version"] == version
-            end
+        def module_path_for(author, module_name, version)
+            "/v3/files/#{author}-#{module_name}-#{version}.tar.gz"
         end
 
-        def get_module_versions(author, name)
-            versions = look_up_releases(author, name)
-            versions["#{author}/#{name}"]
-        end
-
-        def look_up_releases(author, name, version = nil, &optional_processor)
-            version_query = version ? "&version=#{version}" : ""
-            url = "/api/v1/releases.json?module=#{author}/#{name}#{version_query}"
-            response_text = get(url)
-            response = JSON.parse(response_text)
-            process_releases_response(response, &optional_processor)
-        end
-
-        def process_releases_response(response)
-            if block_given?
-                response.each do |full_name, release_infos|
-                    release_infos.each do |release_info|
-                        yield(full_name, release_info)
-                    end
-                end
-            end
-            return response
-        end
-
-        def module_path_for(full_name, version)
-            "/modules/#{full_name.sub("/", "-")}-#{version}.tar.gz"
-        end
-
-        def download_module(author, name, version, file)
+        def download_module(author, name, version)
             @download_cache.get("#{author}-#{name}-#{version}.tar.gz") do
-                @http_client.download(url(file))
+                @http_client.download(url(module_path_for(author, name, version)))
             end
         end
 
@@ -135,6 +134,18 @@ module PuppetLibrary::Forge
             @query_cache.get(relative_url) do
                 @http_client.get(url(relative_url))
             end
+        end
+
+        def get_all_pages(url)
+            results = []
+            loop do
+              response = JSON.parse(get url)
+              results += response["results"]
+              url = response["pagination"]["next"]
+              print "Got #{response["results"].length} results. Next: #{url}\n"
+              break if url.nil?
+            end
+            results
         end
 
         def url(relative_url)

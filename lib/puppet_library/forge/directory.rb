@@ -35,7 +35,7 @@ module PuppetLibrary::Forge
     #        # The path to serve the modules from
     #        path "/var/modules/cache"
     #    end
-    class Directory < PuppetLibrary::Forge::Abstract
+    class Directory < Abstract
 
         def self.configure(&block)
             config_api = PuppetLibrary::Util::ConfigApi.for(Directory) do
@@ -51,37 +51,50 @@ module PuppetLibrary::Forge
 
         # * <tt>:module_dir</tt> - The directory containing the packaged modules.
         def initialize(module_dir)
-            super(self)
             @module_dir = module_dir
+            super()
         end
 
-        def get_module(author, name, version)
+        def get_module_buffer(author, name, version)
             file_name = "#{author}-#{name}-#{version}.tar.gz"
             path = File.join(File.expand_path(@module_dir.path), file_name)
             if File.exist? path
                 File.open(path, 'r')
             else
-                nil
+                raise ModuleNotFound
             end
-        end
-
-        def get_all_metadata
-            get_metadata("*", "*")
-        end
-
-        def get_metadata(author, module_name)
-            archives = Dir["#{@module_dir.path}/**/#{author}-#{module_name}-*.tar.gz"]
-            archives.map {|path| read_metadata(path) }.compact
         end
 
         private
         def read_metadata(archive_path)
             archive = PuppetLibrary::Archive::ArchiveReader.new(archive_path)
-            metadata_file = archive.read_entry %r[[^/]+/metadata\.json$]
-            JSON.parse(metadata_file)
+            JSON.parse archive.read_entry %r[[^/]+/metadata\.json$]
         rescue => error
             warn "Error reading from module archive #{archive_path}: #{error}"
             return nil
         end
+
+        def get_file_metadata(file_path)
+            # TODO: Complete metadata
+            {
+                "file-md5" => Digest::MD5.hexdigest(File.read(file_path)),
+                "file-size" => File.size(file_path)
+            }
+        end
+
+        def full_path(filename)
+           "#{@module_dir.path}/#{filename}"
+        end
+
+        def load_modules
+            clear_modules!
+            Dir.foreach(@module_dir) do |item|
+                next if item == '.' or item == '..'
+                module_metadata = read_metadata(full_path(item))
+                source_metadata = get_file_metadata(full_path(item))
+                add_module(PuppetLibrary::PuppetModule::Module.new_from_source(module_metadata, source_metadata))
+            end
+        end
+
     end
 end

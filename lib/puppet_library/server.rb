@@ -69,6 +69,10 @@ module PuppetLibrary
             @forge.prime
         end
 
+        before "/v3/*" do
+            content_type 'application/json'
+        end
+
         configure do
             enable :logging
             set :haml, :format => :html5
@@ -80,12 +84,11 @@ module PuppetLibrary
             haml :index, { :locals => { "query" => query } }
         end
 
-        get "/modules.json" do
-            search_term = params[:q]
-            @forge.search_modules(search_term).to_json
+        get "/v3/modules" do
+            @forge.search_modules(params).to_json
         end
 
-        get "/:author/:module.json" do
+        get "/v3/modules/:author-:module" do
             author = params[:author]
             module_name = params[:module]
 
@@ -96,21 +99,26 @@ module PuppetLibrary
             end
         end
 
-        get "/api/v1/releases.json" do
-            unless params[:module]
+        get "/v3/releases" do
+            @forge.search_releases(params).to_json
+        end
+
+        get "/v3/releases/:author-:module-:version" do
+            unless params[:author] and params[:module] and params[:version]
                 halt 400, {"error" => "The number of version constraints in the query does not match the number of module names"}.to_json
             end
 
-            author, module_name = params[:module].split "/"
+            author = params[:author]
+            module_name = params[:module]
             version = params[:version]
             begin
-                @forge.get_module_metadata_with_dependencies(author, module_name, version).to_json
+                @forge.get_release_metadata(author, module_name, version).to_json
             rescue Forge::ModuleNotFound
-                halt 410, {"error" => "Module #{author}/#{module_name} not found"}.to_json
+                halt 410, {"errors" => "Module #{author}-#{module_name}-#{version} not found"}.to_json
             end
         end
 
-        get "/modules/:author-:module-:version.tar.gz" do
+        get "/v3/files/:author-:module-:version.tar.gz" do
             author = params[:author]
             name = params[:module]
             version = params[:version]

@@ -34,7 +34,7 @@ module PuppetLibrary::Forge
     #        # The path of the module's source
     #        path "/var/modules/mymodulesource"
     #    end
-    class Source < PuppetLibrary::Forge::Abstract
+    class Source < Abstract
         def self.configure(&block)
             config_api = PuppetLibrary::Util::ConfigApi.for(Source) do
                 required :path, "path to the module's source" do |path|
@@ -49,33 +49,25 @@ module PuppetLibrary::Forge
 
         # * <tt>:module_dir</tt> - The directory containing the module's source.
         def initialize(module_dir)
-            super(self)
             raise "Module directory '#{module_dir.path}' doesn't exist" unless File.directory? module_dir.path
             raise "Module directory '#{module_dir.path}' isn't readable" unless File.executable? module_dir.path
             @module_dir = module_dir
             @metadata_cache = PuppetLibrary::Http::Cache::InMemory.new(CACHE_TTL_MILLIS)
+            super()
         end
 
-        def get_module(author, name, version)
-            return nil unless this_module?(author, name, version)
+        def get_module_buffer(author, name, version)
+            raise ModuleNotFound unless this_module?(author, name, version)
             PuppetLibrary::Archive::Archiver.archive_dir(@module_dir.path, "#{author}-#{name}-#{version}") do |archive|
                 archive.add_file("metadata.json", 0644) do |entry|
-                    entry.write metadata.to_json
+                    entry.write load_metadata.to_json
                 end
             end
         end
 
-        def get_metadata(author, module_name)
-            return [] unless this_module?(author, module_name)
-            [ metadata ]
-        end
-
-        def get_all_metadata
-            get_metadata(metadata["author"], metadata["name"].split("-").last)
-        end
-
         private
         def this_module?(author, module_name, version = nil)
+            metadata = load_metadata
             same_module = metadata["name"] == "#{author}-#{module_name}"
             if version.nil?
                 return same_module
@@ -84,7 +76,7 @@ module PuppetLibrary::Forge
             end
         end
 
-        def metadata
+        def load_metadata
             @metadata_cache.get "metadata" do
                 metadata_file_path = File.join(@module_dir.path, "metadata.json")
                 modulefile_path = File.join(@module_dir.path, "Modulefile")
@@ -95,6 +87,11 @@ module PuppetLibrary::Forge
                     modulefile.to_metadata
                 end
             end
+        end
+
+        def load_modules
+            clear_modules!
+            add_module PuppetLibrary::PuppetModule::Module.new_from_source(load_metadata, {})
         end
     end
 end

@@ -56,12 +56,64 @@ module PuppetLibrary::Forge
             @forges << forge
         end
 
-        def search_modules(query)
-            all_results = @forges.map do |forge|
-                forge.search_modules(query)
-            end.flatten
+        def search_modules(params)
+            all_results = @forges.inject([]) do |results, forge|
+                begin
+                    results += forge.search_modules(params)
+                rescue ModuleNotFound
+                    # Try the next one
+                rescue NotImplmenetedError
+                    # TODO: Remove this when method is implemented in all forge types
+                end
+            end
 
-            SearchResult.merge_by_full_name(all_results)
+            unique_results = SearchResult.merge_duplicate_modules(all_results)
+            paginate(to_output_format(unique_results))
+        end
+
+        def search_releases(params)
+            all_results = @forges.inject([]) do |all, forge|
+                begin
+                    all += forge.search_releases(params)
+                rescue ModuleNotFound
+                    # Try the next one
+                rescue NotImplementedError
+                    # TODO: Remove this when method is implemented in all forge types
+                end
+            end
+
+            unique_results = SearchResult.remove_duplicates(all_results)
+            paginate(to_output_format(unique_results))
+        end
+
+        def get_module_metadata(author, name)
+            combined_module = @forges.inject(nil) do |combined_module, forge|
+                begin
+                    new_module = forge.get_module_metadata(author, name) 
+                    if combined_module then 
+                        combined_module.merge new_module
+                    else
+                        combined_module = new_module 
+                    end
+                rescue ModuleNotFound
+                end
+                combined_module
+            end
+            raise ModuleNotFound unless combined_module
+            combined_module.get_long
+        end
+
+        def get_release_metadata(author, name, version)
+            @forges.each do |forge|
+                begin
+                    return forge.get_release_metadata(author, name, version).get_long
+                rescue ModuleNotFound
+                    # Try the next one
+                rescue NotImplementedError
+                    # TODO: Remove this when method is implemented in all forge types
+                end
+            end
+            raise ModuleNotFound
         end
 
         def get_module_buffer(author, name, version)
@@ -70,61 +122,35 @@ module PuppetLibrary::Forge
                     return forge.get_module_buffer(author, name, version)
                 rescue ModuleNotFound
                     # Try the next one
+                rescue NotImplementedError
+                    # TODO: Remove this when method is implemented in all forge types
                 end
             end
             raise ModuleNotFound
         end
 
-        def get_module_metadata(author, name)
-            metadata_list = @forges.inject([]) do |metadata_list, forge|
-                begin
-                    metadata_list << forge.get_module_metadata(author, name)
-                rescue ModuleNotFound
-                    metadata_list
-                end
+        private
+        def to_output_format(objects)
+            results = []
+            objects.each do |object|
+                results << object.get_long
             end
-            raise ModuleNotFound if metadata_list.empty?
-            metadata_list.deep_merge.tap do |metadata|
-                metadata["releases"] = metadata["releases"].unique_by { |release| release["version"] }
-            end
+            results
         end
 
-        def get_module_metadata_with_dependencies(author, name, version)
-            modules_to_search = [ OpenStruct.new(:author => author, :name => name, :version => version) ]
-
-            already_searched_modules =  []
-
-            metadata_list = []
-            while spec = modules_to_search.shift
-                if already_searched_modules.include? spec
-                    next
-                else
-                    already_searched_modules << spec
-                end
-
-                @forges.each do |forge|
-                    begin
-                        metadata = forge.get_module_metadata_with_dependencies(spec.author, spec.name, spec.version)
-
-                        # Search all subforges for all versions of the dependencies too
-                        modules_to_search += metadata.keys.map do |dep_full_name|
-                            dep_author, dep_name = dep_full_name.split("/")
-                            OpenStruct.new(:author => dep_author, :name => dep_name, :version => nil)
-                        end
-
-                        metadata_list << metadata
-                    rescue ModuleNotFound
-                        # Try the next one
-                    end
-                end
-            end
-
-            raise ModuleNotFound if metadata_list.empty?
-            metadata_list.deep_merge.tap do |metadata|
-                metadata.each do |module_name, releases|
-                    metadata[module_name] = releases.unique_by { |release| release["version"] }
-                end
-            end
+        def paginate(results)
+            {
+                "pagination" => {
+                    "limit" => results.length,
+                    "offset" => 0,
+                    "first" => nil,
+                    "previous" => nil,
+                    "current" => nil,
+                    "next" => nil,
+                    "total" => results.length
+                },
+                "results" => results
+            }
         end
     end
 end

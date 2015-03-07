@@ -30,23 +30,62 @@ module PuppetLibrary::Forge
         end
 
         def self.combine_search_results(search_results)
-            highest_version, tags, releases = search_results.inject([nil, [], []]) do |(highest_version, tags, releases), result|
-                [
-                    max_version(highest_version, result["version"]),
-                    tags + (result["tag_list"] || []),
-                    releases + (result["releases"] || [])
-                ]
+            latest_release, releases = search_results.inject([nil, []]) do |(latest_release, releases), result|
+                releases += result["releases"] || []
+                max = latest_release && latest_release["version"] || 0
+                current = result["current_release"]["version"]
+                new_max = max_version(max, current)
+                if new_max == max
+                    [latest_release, releases]
+                else
+                    [result["current_release"], releases]
+                end
             end
 
             combined_result = search_results.first.tap do |result|
-                result["version"] = highest_version
-                result["tag_list"] = tags.uniq
                 result["releases"] = releases.uniq.version_sort_by {|r| r["version"]}.reverse
+                result["current_release"] = latest_release
             end
         end
 
-        def self.max_version(left, right)
-            [Gem::Version.new(left), Gem::Version.new(right)].max.version
+        def self.remove_duplicates(results)
+            # TODO: Improve this method
+            return [] unless results
+
+            results_by_module = results.group_by do |result|
+                result.get_full_name
+            end
+
+            unique_results = []
+            results_by_module.each do |full_name, result_group|
+                unique_results << result_group.first
+            end
+
+            unique_results
+        end
+
+        def self.merge_duplicate_modules(results)
+            return [] unless results
+
+            groups_by_name = results.group_by do |result|
+                result.get_full_name
+            end
+
+            merged_results = []
+            groups_by_name.each do |name, result_group|
+                if result_group.length == 1
+                    merged_results << result_group.first
+                else
+                    base = result_group.first
+                    duplicates = result_group.last(result_group.length - 1)
+                    duplicates.each do |duplicate|
+                        base.merge_with duplicate
+                    end
+                    merged_results << base
+                end
+            end
+
+            merged_results
         end
     end
 end
