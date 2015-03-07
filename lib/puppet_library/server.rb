@@ -76,15 +76,23 @@ module PuppetLibrary
         end
 
         get "/v3/modules" do
-            search_term = params[:query]
-            @forge.get_modules(search_term).to_json
+            if full_v3?
+                search_term = params[:query]
+                @forge.get_modules(search_term).to_json
+            else
+                redirect "/modules.json"
+            end
         end
 
         get "/v3/releases" do
             unless params[:module]
                 halt 400, {"error" => "Supply the module whose releases will be retrived"}.to_json
             end
-            @forge.get_releases(params[:module]).to_json
+            if full_v3?
+                @forge.get_releases(params[:module]).to_json
+            else
+                redirect "/api/v1/releases.json"
+            end
         end
 
         get "/v3/files/:module_name-:version.tar.gz" do
@@ -179,6 +187,17 @@ module PuppetLibrary
                 headers = {}
             end
             [ 200, headers, buffer ]
+        end
+
+        USERAGENT_RE = Regexp.new %r{(([\S]+)(\s+\([-\w\s;:]+\))?\s)}
+
+        def full_v3?
+          str = request.user_agent
+          while ua = USERAGENT_RE.match(str)
+            return true if ua[2] == "PMT/1.1.1"
+            str = ua.post_match
+          end
+          return false
         end
     end
 end
