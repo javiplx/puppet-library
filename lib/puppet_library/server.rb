@@ -80,7 +80,7 @@ module PuppetLibrary
                 search_term = params[:query]
                 @forge.get_modules(search_term).to_json
             else
-                redirect "/modules.json"
+                redirect "/modules.json?q=search_term"
             end
         end
 
@@ -91,7 +91,9 @@ module PuppetLibrary
             if full_v3?
                 @forge.get_releases(params[:module]).to_json
             else
-                redirect "/api/v1/releases.json"
+                parameters = "module=#{params[:module].split('-').join('/')}"
+                parameters += "&version=#{params[:version]}" if params[:version]
+                redirect "/api/v1/releases.json?#{parameters}"
             end
         end
 
