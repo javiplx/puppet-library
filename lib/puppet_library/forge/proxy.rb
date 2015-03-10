@@ -72,8 +72,11 @@ module PuppetLibrary::Forge
 
         def get_module_metadata(author, name)
             begin
-                response = get("/#{author}/#{name}.json")
-                JSON.parse(response)
+                # librarian-puppet does some special handling for forgeapi.puppetlabs.com,
+                # so naive passthrough will fail
+                response = get_modules("#{author}-#{name}")
+                raise ModuleNotFound if response.empty?
+                to_info(response[0])
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
             end
@@ -102,8 +105,13 @@ module PuppetLibrary::Forge
 
         def get_module_metadata_with_dependencies(author, name, version)
             begin
-                look_up_releases(author, name, version) do |full_name, release_info|
-                    release_info["file"] = module_path_for(full_name, release_info["version"])
+                # again, librarian-puppet forces v3-v1 translation
+                response = get_releases("#{author}-#{name}")
+                raise ModuleNotFound if response.empty?
+                response.group_by do |result|
+                   result["metadata"]["name"].sub("-", "/")
+                end.inject({}) do |hash,(modname,releases)|
+                   hash.merge( modname => releases.map{ |rel| to_version(rel) } )
                 end
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
@@ -111,6 +119,26 @@ module PuppetLibrary::Forge
         end
 
         private
+        def to_info(metadata_v3)
+            {
+                "author" => metadata_v3["owner"]["username"],
+                "full_name" => metadata_v3["current_release"]["metadata"]["name"].sub("-", "/"),
+                "name" => metadata_v3["name"],
+                "summary" => metadata_v3["current_release"]["metadata"]["summary"],
+                "releases" => metadata_v3["releases"].collect{ |r| { "version" => r["version"] } }
+            }
+        end
+
+        def to_version(metadata_v3)
+            {
+                "file" => "/modules/#{metadata_v3['metadata']['name']}-#{metadata_v3['version']}.tar.gz",
+                "version" =>  metadata_v3["version"],
+                "dependencies" =>  metadata_v3["metadata"]["dependencies"].map do |dependency|
+                    [ dependency["name"], dependency["version_requirement"] ]
+                end
+            }
+        end
+
         def get_module_version(author, name, version)
             module_versions = get_module_versions(author, name)
             module_versions.find do |version_info|
