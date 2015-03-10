@@ -102,8 +102,13 @@ module PuppetLibrary::Forge
 
         def get_module_metadata_with_dependencies(author, name, version)
             begin
-                look_up_releases(author, name, version) do |full_name, release_info|
-                    release_info["file"] = module_path_for(full_name, release_info["version"])
+                # again, librarian-puppet forces v3-v1 translation
+                response = get_releases("#{author}-#{name}")
+                raise ModuleNotFound if response.empty?
+                response.group_by do |result|
+                   result["metadata"]["name"].sub("-", "/")
+                end.inject({}) do |hash,(modname,releases)|
+                   hash.merge( modname => releases.map{ |rel| to_version(rel) } )
                 end
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
@@ -140,6 +145,16 @@ module PuppetLibrary::Forge
                 end
             end
             return response
+        end
+
+        def to_version(metadata_v3)
+            {
+                "file" => "/modules/#{metadata_v3['metadata']['name']}-#{metadata_v3['version']}.tar.gz",
+                "version" =>  metadata_v3["version"],
+                "dependencies" =>  metadata_v3["metadata"]["dependencies"].map do |dependency|
+                    [ dependency["name"], dependency["version_requirement"] ]
+                end
+            }
         end
 
         def module_path_for(full_name, version)
