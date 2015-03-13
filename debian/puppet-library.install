@@ -1,2 +1,1 @@
-debian/puppet-library.initscript /etc/init.d
 debian/puppet-library.conf /etc
