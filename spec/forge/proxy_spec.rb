@@ -53,7 +53,8 @@ module PuppetLibrary::Forge
                             ]
                         }' }
 
-        let(:releases_v3) { '{"results": [
+        let(:releases_v3) { '{"pagination": { "next": null },
+                    "results": [
                         {
                             "version" : "1.0.0",
                             "metadata" : {
