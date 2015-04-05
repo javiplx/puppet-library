@@ -72,7 +72,7 @@ module PuppetLibrary::Forge
             begin
                 response = JSON.parse get("/v3/modules/#{author}-#{name}")
                 raise ModuleNotFound if response.empty?
-                translate_to_v1(response)
+                translate_to_v1(response, false)
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
             end
@@ -113,13 +113,22 @@ module PuppetLibrary::Forge
 
         def get_module_metadata_with_dependencies(author, name, version)
             begin
-                # again, librarian-puppet forces v3-v1 translation
-                response = get_releases("#{author}-#{name}")
-                raise ModuleNotFound if response.empty?
-                response.group_by do |result|
-                   result["metadata"]["name"].sub("-", "/")
-                end.inject({}) do |hash,(modname,releases)|
-                   hash.merge( modname => releases.map{ |rel| to_version(rel) } )
+                if version.nil?
+                    response = get_releases("#{author}-#{name}")
+                    raise ModuleNotFound if response.empty?
+                    response.group_by do |result|
+                       mod = result["module"]
+                       "#{mod["owner"]["username"]}/#{mod["name"]}"
+                    end.inject({}) do |hash,(modname,releases)|
+                       hash.merge( modname => releases.sort_by{ |r| r['version'] }.map{ |rel| to_version(rel) } )
+                    end
+                else
+                    response = JSON.parse get("/v3/releases/#{author}-#{name}-#{version}")
+                    raise ModuleNotFound if response.empty?
+                    base = { "#{author}/#{name}" => [ to_version(response) ] }
+                    response["metadata"]["dependencies"].inject(base) do |hash,dep|
+                        hash.merge( dep["name"] => [] )
+                    end
                 end
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
@@ -128,27 +137,33 @@ module PuppetLibrary::Forge
 
         private
 
-        def translate_to_v1(module_v3)
+        def translate_to_v1(module_v3,detail=true)
+            mod = module_v3["current_release"]["module"]
             metadata = module_v3["current_release"]["metadata"]
-                {
-                "author" => metadata["author"],
-                "desc" => metadata["description"],
-                "full_name" => metadata["name"],
-                "name" => metadata["name"].sub("#{metadata["author"]}-",""),
-                "project_url" => metadata["project_page"],
+            out = {
+                "author" => mod["owner"]["username"],
+                "desc" => metadata["summary"],
+                "full_name" => "#{mod["owner"]["username"]}/#{mod["name"]}",
+                "name" => mod["name"],
                 "releases" => module_v3["releases"].collect{ |x| { "version" => x["version"] } },
-                "tag_list" => module_v3["current_release"]["tags"],
-                "version" => metadata["version"]
+                "tag_list" => module_v3["current_release"]["tags"]
             }
+            out.update( {
+                "project_url" => module_v3["homepage_url"],
+                "version" => metadata["version"]
+            } ) if detail
+           Hash[out.sort]
         end
 
         def to_version(metadata_v3)
             {
-                "file" => "/modules/#{metadata_v3['metadata']['name']}-#{metadata_v3['version']}.tar.gz",
-                "version" =>  metadata_v3["version"],
                 "dependencies" =>  metadata_v3["metadata"]["dependencies"].map do |dependency|
                     [ dependency["name"], dependency["version_requirement"] ]
-                end
+                end.sort_by do |item|
+                    item[0]
+                end,
+                "file" => "/modules/#{metadata_v3['metadata']['name']}-#{metadata_v3['version']}.tar.gz",
+                "version" =>  metadata_v3["version"]
             }
         end
 
