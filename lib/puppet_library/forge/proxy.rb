@@ -102,13 +102,22 @@ module PuppetLibrary::Forge
 
         def get_module_metadata_with_dependencies(author, name, version)
             begin
-                # again, librarian-puppet forces v3-v1 translation
-                response = get_releases("#{author}-#{name}")
-                raise ModuleNotFound if response.empty?
-                response.group_by do |result|
-                   result["metadata"]["name"].sub("-", "/")
-                end.inject({}) do |hash,(modname,releases)|
-                   hash.merge( modname => releases.map{ |rel| to_version(rel) } )
+                if version.nil?
+                    response = get_releases("#{author}-#{name}")
+                    raise ModuleNotFound if response.empty?
+                    response.group_by do |result|
+                       mod = result["module"]
+                       "#{mod["owner"]["username"]}/#{mod["name"]}"
+                    end.inject({}) do |hash,(modname,releases)|
+                       hash.merge( modname => releases.sort_by{ |r| r['version'] }.map{ |rel| to_version(rel) } )
+                    end
+                else
+                    response = JSON.parse get("/v3/releases/#{author}-#{name}-#{version}")
+                    raise ModuleNotFound if response.empty?
+                    base = { "#{author}/#{name}" => [ to_version(response) ] }
+                    response["metadata"]["dependencies"].inject(base) do |hash,dep|
+                        hash.merge( dep["name"] => [] )
+                    end
                 end
             rescue OpenURI::HTTPError
                 raise ModuleNotFound
@@ -149,11 +158,13 @@ module PuppetLibrary::Forge
 
         def to_version(metadata_v3)
             {
-                "file" => "/modules/#{metadata_v3['metadata']['name']}-#{metadata_v3['version']}.tar.gz",
-                "version" =>  metadata_v3["version"],
                 "dependencies" =>  metadata_v3["metadata"]["dependencies"].map do |dependency|
                     [ dependency["name"], dependency["version_requirement"] ]
-                end
+                end.sort_by do |item|
+                    item[0]
+                end,
+                "file" => "/modules/#{metadata_v3['metadata']['name']}-#{metadata_v3['version']}.tar.gz",
+                "version" =>  metadata_v3["version"]
             }
         end
 
