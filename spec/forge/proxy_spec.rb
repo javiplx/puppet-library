@@ -26,11 +26,14 @@ module PuppetLibrary::Forge
 
         let(:modules_v3) { '{
                             "name" : "apache",
-                            "owner" : {
-                                "username" : "puppetlabs"
-                            },
                             "current_release" : {
                                 "version" : "1.0.0",
+                                "module" : {
+                                    "name" : "apache",
+                                    "owner" : {
+                                        "username" : "puppetlabs"
+                                    }
+                                },
                                 "metadata" : {
                                     "name" : "puppetlabs-apache",
                                     "version" : "1.0.0",
@@ -53,9 +56,7 @@ module PuppetLibrary::Forge
                             ]
                         }' }
 
-        let(:releases_v3) { '{"pagination": { "next": null },
-                    "results": [
-                        {
+        let(:release_v3) { '{
                             "version" : "1.0.0",
                             "metadata" : {
                                 "name" : "puppetlabs-apache",
@@ -70,15 +71,7 @@ module PuppetLibrary::Forge
                                     }
                                 ]
                             }
-                        },
-                        {
-                            "version" : "2.0.0",
-                            "metadata" : {
-                                "name" : "puppetlabs-apache",
-                                "dependencies": []
-                            }
-                        }
-                        ] }' }
+                        }' }
 
         describe "#configure" do
             it "exposes a configuration API" do
@@ -242,10 +235,10 @@ module PuppetLibrary::Forge
             context "when the module is found" do
                 it "forwards the request directly, but adjusts the module download locations" do
                     original_response = '{"puppetlabs/apache":[{"version":"1.0.0","file":"/puppetlabs/apache/1.0.0.tar.gz","dependencies":[["puppetlabs/concat",">= 1.0.0"],["puppetlabs/stdlib","~> 2.0.0"]]},{"version":"2.0.0","file":"/puppetlabs/apache/2.0.0.tar.gz","dependencies":[]}]}'
-                    doctored_response = '{"puppetlabs/apache":[{"version":"1.0.0","file":"/modules/puppetlabs-apache-1.0.0.tar.gz","dependencies":[["puppetlabs/concat",">= 1.0.0"],["puppetlabs/stdlib","~> 2.0.0"]]},{"version":"2.0.0","file":"/modules/puppetlabs-apache-2.0.0.tar.gz","dependencies":[]}]}'
+                    doctored_response = '{"puppetlabs/apache":[{"version":"1.0.0","file":"/modules/puppetlabs-apache-1.0.0.tar.gz","dependencies":[["puppetlabs/concat",">= 1.0.0"],["puppetlabs/stdlib","~> 2.0.0"]]}],"puppetlabs/concat":[],"puppetlabs/stdlib":[]}'
                     expect(http_client).to receive(:get).
-                        with("http://puppetforge.example.com/v3/releases?module=puppetlabs-apache").
-                        and_return(releases_v3)
+                        with("http://puppetforge.example.com/v3/releases/puppetlabs-apache-1.0.0").
+                        and_return(release_v3)
 
                     result = forge.get_module_metadata_with_dependencies("puppetlabs", "apache", "1.0.0")
 
@@ -255,8 +248,8 @@ module PuppetLibrary::Forge
                 it "caches the result" do
                     response = '{"puppetlabs/apache":[{"version":"1.0.0","dependencies":[["puppetlabs/concat",">= 1.0.0"],["puppetlabs/stdlib","~> 2.0.0"]]},{"version":"2.0.0","dependencies":[]}]}'
                     expect(http_client).to receive(:get).once.
-                        with("http://puppetforge.example.com/v3/releases?module=puppetlabs-apache").
-                        and_return(releases_v3)
+                        with("http://puppetforge.example.com/v3/releases/puppetlabs-apache-1.0.0").
+                        and_return(release_v3)
 
                     forge.get_module_metadata_with_dependencies("puppetlabs", "apache", "1.0.0")
                     forge.get_module_metadata_with_dependencies("puppetlabs", "apache", "1.0.0")
