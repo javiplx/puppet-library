@@ -116,7 +116,7 @@ module PuppetLibrary::Forge
     class ModuleMetadata
         def initialize(metadata)
             @metadata = metadata
-            dependencies.each{ |h| h["version_requirement"].sub!(" v"," ") }
+            dependencies.each{ |h| h["version_requirement"].sub!(" v"," ") unless h["version_requirement"].nil? } unless dependencies.nil?
         end
 
         def author
