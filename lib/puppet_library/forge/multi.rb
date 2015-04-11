@@ -110,7 +110,7 @@ module PuppetLibrary::Forge
                         modules_to_search += metadata.keys.map do |dep_full_name|
                             dep_author, dep_name = dep_full_name.split("/")
                             dep_version = metadata[dep_full_name].first
-                            OpenStruct.new(:author => dep_author, :name => dep_name, :version => dep_version ? dep_version["version"] : nil)
+                            OpenStruct.new(:author => dep_author, :name => dep_name, :version => dep_version.is_a?(Hash) ? dep_version["version"] : nil)
                         end
 
                         metadata_list << metadata
