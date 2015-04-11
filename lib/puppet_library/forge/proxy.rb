@@ -21,6 +21,8 @@ require 'puppet_library/http/cache/in_memory'
 require 'puppet_library/http/cache/noop'
 require 'puppet_library/util/config_api'
 
+require 'semantic'
+
 module PuppetLibrary::Forge
 
     # A forge that proxies a remote forge.
@@ -113,10 +115,14 @@ module PuppetLibrary::Forge
 
         def get_module_metadata_with_dependencies(author, name, version)
             begin
-                if version.nil?
+                unless version =~ Semantic::Version::SemVerRegexp
                     response = get_releases("#{author}-#{name}")
                     raise ModuleNotFound if response.empty?
-                    response.group_by do |result|
+                    version_requirement = version.gsub(/ v?([0-9])/, "\\1").split
+                    response.select do |result|
+                        me = Semantic::Version.new result["version"]
+                        version_requirement.collect{ |part| me.satisfies part }.all?
+                    end.group_by do |result|
                        mod = result["module"]
                        "#{mod["owner"]["username"]}/#{mod["name"]}"
                     end.inject({}) do |hash,(modname,releases)|
@@ -127,7 +133,7 @@ module PuppetLibrary::Forge
                     raise ModuleNotFound if response.empty?
                     base = { "#{author}/#{name}" => [ to_version(response) ] }
                     response["metadata"]["dependencies"].inject(base) do |hash,dep|
-                        hash.merge( dep["name"] => [] )
+                        hash.merge( dep["name"] => [ { "version" => dep["version_requirement"] } ] )
                     end
                 end
             rescue OpenURI::HTTPError

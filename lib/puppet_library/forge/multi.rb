@@ -110,7 +110,8 @@ module PuppetLibrary::Forge
                         modules_to_search += metadata.keys.map do |dep_full_name|
                             dep_author, dep_name = dep_full_name.split("/")
                             dep_version = metadata[dep_full_name].first
-                            OpenStruct.new(:author => dep_author, :name => dep_name, :version => dep_version.is_a?(Hash) ? dep_version["version"] : nil)
+                            OpenStruct.new(:author => dep_author, :name => dep_name, :version => dep_version.is_a?(Hash) ? dep_version["version"] : dep_version)
+
                         end
 
                         metadata_list << metadata
@@ -123,7 +124,7 @@ module PuppetLibrary::Forge
             raise ModuleNotFound if metadata_list.empty?
             metadata_list.deep_merge.tap do |metadata|
                 metadata.each do |module_name, releases|
-                    metadata[module_name] = releases.unique_by { |release| release["version"] }.sort_by{ |release| release["version"] }
+                    metadata[module_name] = releases.unique_by { |release| release["version"] }.sort_by{ |release| release["version"] }.reject{ |r| r["file"].nil? }
                 end
             end
         end
