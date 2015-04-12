@@ -115,33 +115,8 @@ module PuppetLibrary::Forge
 
         def get_module_metadata_with_dependencies(author, name, version)
             begin
-                unless SemanticPuppet::Version.valid? version
-                    response = get_releases("#{author}-#{name}")
-                    raise ModuleNotFound if response.empty?
-                    unless version.nil?
-                      version_requirement = SemanticPuppet::VersionRange.parse version
-                      response = response.select do |result|
-                          version_requirement.include? SemanticPuppet::Version.parse result["version"]
-                      end
-                    end
-                    base = { "#{author}/#{name}" => response.collect{ |r| to_version(r) } }
-                    response.collect do |r|
-                        r["metadata"]["dependencies"]
-                    end.flatten.uniq.inject(base) do |hash,dep|
-                        if item = hash[dep["name"]]
-                            item << { "version" => dep["version_requirement"] }
-                        else
-                            hash[dep["name"]] = [ { "version" => dep["version_requirement"] } ]
-                        end
-                        hash
-                    end
-                else
-                    response = JSON.parse get("/v3/releases/#{author}-#{name}-#{version}")
-                    raise ModuleNotFound if response.empty?
-                    base = { "#{author}/#{name}" => [ to_version(response) ] }
-                    response["metadata"]["dependencies"].inject(base) do |hash,dep|
-                        hash.merge( dep["name"] => [ { "version" => dep["version_requirement"] } ] )
-                    end
+                look_up_releases(author, name, version) do |full_name, release_info|
+                    release_info["file"] = module_path_for(full_name, release_info["version"])
                 end
             rescue OpenURI::HTTPError
                 raise ModuleNotFound

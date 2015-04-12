@@ -56,23 +56,6 @@ module PuppetLibrary::Forge
                             ]
                         }' }
 
-        let(:release_v3) { '{
-                            "version" : "1.0.0",
-                            "metadata" : {
-                                "name" : "puppetlabs-apache",
-                                "dependencies": [
-                                    {
-                                        "name": "puppetlabs/concat",
-                                        "version_requirement": ">= 1.0.0"
-                                    },
-                                    {
-                                        "name": "puppetlabs/stdlib",
-                                        "version_requirement": "~> 2.0.0"
-                                    }
-                                ]
-                            }
-                        }' }
-
         describe "#configure" do
             it "exposes a configuration API" do
                 forge = Proxy.configure do
@@ -223,7 +206,7 @@ module PuppetLibrary::Forge
             context "the module isn't found" do
                 it "raises an error" do
                     expect(http_client).to receive(:get).
-                        with("http://puppetforge.example.com/v3/releases?module=nonexistant-nonexistant").
+                        with("http://puppetforge.example.com/api/v1/releases.json?module=nonexistant/nonexistant").
                         and_raise(OpenURI::HTTPError.new("410 Gone", "Module not found"))
 
                     expect {
@@ -234,10 +217,11 @@ module PuppetLibrary::Forge
 
             context "when the module is found" do
                 it "forwards the request directly, but adjusts the module download locations" do
-                    doctored_response = '{"puppetlabs/apache":[{"version":"1.0.0","file":"/modules/puppetlabs-apache-1.0.0.tar.gz","dependencies":[["puppetlabs/concat",">= 1.0.0"],["puppetlabs/stdlib","~> 2.0.0"]]}],"puppetlabs/concat":[{"version":">= 1.0.0"}],"puppetlabs/stdlib":[{"version":"~> 2.0.0"}]}'
+                    original_response = '{"puppetlabs/apache":[{"version":"1.0.0","file":"/puppetlabs/apache/1.0.0.tar.gz","dependencies":[["puppetlabs/concat",">= 1.0.0"],["puppetlabs/stdlib","~> 2.0.0"]]},{"version":"2.0.0","file":"/puppetlabs/apache/2.0.0.tar.gz","dependencies":[]}]}'
+                    doctored_response = '{"puppetlabs/apache":[{"version":"1.0.0","file":"/modules/puppetlabs-apache-1.0.0.tar.gz","dependencies":[["puppetlabs/concat",">= 1.0.0"],["puppetlabs/stdlib","~> 2.0.0"]]},{"version":"2.0.0","file":"/modules/puppetlabs-apache-2.0.0.tar.gz","dependencies":[]}]}'
                     expect(http_client).to receive(:get).
-                        with("http://puppetforge.example.com/v3/releases/puppetlabs-apache-1.0.0").
-                        and_return(release_v3)
+                        with("http://puppetforge.example.com/api/v1/releases.json?module=puppetlabs/apache&version=1.0.0").
+                        and_return(original_response)
 
                     result = forge.get_module_metadata_with_dependencies("puppetlabs", "apache", "1.0.0")
 
@@ -247,8 +231,8 @@ module PuppetLibrary::Forge
                 it "caches the result" do
                     response = '{"puppetlabs/apache":[{"version":"1.0.0","dependencies":[["puppetlabs/concat",">= 1.0.0"],["puppetlabs/stdlib","~> 2.0.0"]]},{"version":"2.0.0","dependencies":[]}]}'
                     expect(http_client).to receive(:get).once.
-                        with("http://puppetforge.example.com/v3/releases/puppetlabs-apache-1.0.0").
-                        and_return(release_v3)
+                        with("http://puppetforge.example.com/api/v1/releases.json?module=puppetlabs/apache&version=1.0.0").
+                        and_return(response)
 
                     forge.get_module_metadata_with_dependencies("puppetlabs", "apache", "1.0.0")
                     forge.get_module_metadata_with_dependencies("puppetlabs", "apache", "1.0.0")
