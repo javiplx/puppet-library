@@ -21,7 +21,7 @@ require 'puppet_library/http/cache/in_memory'
 require 'puppet_library/http/cache/noop'
 require 'puppet_library/util/config_api'
 
-require 'semantic'
+require 'semantic_puppet'
 
 module PuppetLibrary::Forge
 
@@ -115,14 +115,16 @@ module PuppetLibrary::Forge
 
         def get_module_metadata_with_dependencies(author, name, version)
             begin
-                unless version =~ Semantic::Version::SemVerRegexp
+                unless SemanticPuppet::Version.valid? version
                     response = get_releases("#{author}-#{name}")
                     raise ModuleNotFound if response.empty?
-                    version_requirement = version.gsub(/ v?([0-9])/, "\\1").split
-                    response.select do |result|
-                        me = Semantic::Version.new result["version"]
-                        version_requirement.collect{ |part| me.satisfies part }.all?
-                    end.group_by do |result|
+                    unless version.nil?
+                      version_requirement = SemanticPuppet::VersionRange.parse version
+                      response = response.select do |result|
+                          version_requirement.include? SemanticPuppet::Version.parse result["version"]
+                      end
+                    end
+                    response.group_by do |result|
                        mod = result["module"]
                        "#{mod["owner"]["username"]}/#{mod["name"]}"
                     end.inject({}) do |hash,(modname,releases)|
