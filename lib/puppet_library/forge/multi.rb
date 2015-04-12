@@ -99,6 +99,8 @@ module PuppetLibrary::Forge
             while spec = modules_to_search.shift
                 if already_searched_modules.include? spec
                     next
+                elsif already_searched_modules.select{ |f| f.author == spec.author && f.name == spec.name && f.version.nil? }.any?
+                    next
                 else
                     already_searched_modules << spec
                 end

@@ -127,7 +127,7 @@ module PuppetLibrary::Forge
                     base = { "#{author}/#{name}" => response.collect{ |r| to_version(r) } }
                     response.collect do |r|
                         r["metadata"]["dependencies"]
-                    end.flatten.inject(base) do |hash,dep|
+                    end.flatten.uniq.inject(base) do |hash,dep|
                         if item = hash[dep["name"]]
                             item << { "version" => dep["version_requirement"] }
                         else
