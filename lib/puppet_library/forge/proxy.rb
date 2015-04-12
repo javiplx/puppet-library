@@ -124,11 +124,16 @@ module PuppetLibrary::Forge
                           version_requirement.include? SemanticPuppet::Version.parse result["version"]
                       end
                     end
-                    response.group_by do |result|
-                       mod = result["module"]
-                       "#{mod["owner"]["username"]}/#{mod["name"]}"
-                    end.inject({}) do |hash,(modname,releases)|
-                       hash.merge( modname => releases.sort_by{ |r| r['version'] }.map{ |rel| to_version(rel) } )
+                    base = { "#{author}/#{name}" => response.collect{ |r| to_version(r) } }
+                    response.collect do |r|
+                        r["metadata"]["dependencies"]
+                    end.flatten.inject(base) do |hash,dep|
+                        if item = hash[dep["name"]]
+                            item << { "version" => dep["version_requirement"] }
+                        else
+                            hash[dep["name"]] = [ { "version" => dep["version_requirement"] } ]
+                        end
+                        hash
                     end
                 else
                     response = JSON.parse get("/v3/releases/#{author}-#{name}-#{version}")

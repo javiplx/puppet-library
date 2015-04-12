@@ -18,6 +18,7 @@
 require 'puppet_library/forge/forge'
 require 'puppet_library/forge/search_result'
 require 'puppet_library/util/patches'
+require 'semantic_puppet'
 require 'ostruct'
 
 module PuppetLibrary::Forge
@@ -109,10 +110,10 @@ module PuppetLibrary::Forge
                         # Search all subforges for all versions of the dependencies too
                         modules_to_search += metadata.keys.map do |dep_full_name|
                             dep_author, dep_name = dep_full_name.split("/")
-                            dep_version = metadata[dep_full_name].first
-                            OpenStruct.new(:author => dep_author, :name => dep_name, :version => dep_version.is_a?(Hash) ? dep_version["version"] : dep_version)
-
-                        end
+                            metadata[dep_full_name].collect do |dep|
+                                OpenStruct.new(:author => dep_author, :name => dep_name, :version => dep["version"])
+                            end
+                        end.flatten
 
                         metadata_list << metadata
                     rescue ModuleNotFound
@@ -124,7 +125,7 @@ module PuppetLibrary::Forge
             raise ModuleNotFound if metadata_list.empty?
             metadata_list.deep_merge.tap do |metadata|
                 metadata.each do |module_name, releases|
-                    metadata[module_name] = releases.unique_by { |release| release["version"] }.sort_by{ |release| release["version"] }.reject{ |r| r["file"].nil? }
+                    metadata[module_name] = releases.reject{ |r| r["file"].nil? }.unique_by { |release| release["version"] }.sort_by{ |release| SemanticPuppet::Version.parse release["version"] }
                 end
             end
         end
