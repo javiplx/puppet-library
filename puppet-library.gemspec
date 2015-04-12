@@ -42,7 +42,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "docile", ">= 1.0.0"
   spec.add_dependency "open4"
 
-  spec.add_dependency "semantic", ">= 1.0.0"
+  spec.add_dependency "semantic_puppet"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "coveralls"
