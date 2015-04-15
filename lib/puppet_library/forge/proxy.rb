@@ -129,7 +129,13 @@ module PuppetLibrary::Forge
                     raise ModuleNotFound if response.empty?
                     base = { "#{author}/#{name}" => [ to_version(response) ] }
                     response["metadata"]["dependencies"].inject(base) do |hash,dep|
-                        hash.merge( dep["name"] => [ { "version" => dep["version_requirement"] } ] )
+                        author, name = dep["name"].split "/"
+                        deplist = get_releases("#{author}-#{name}").collect do |response|
+                            to_version(response)
+                        end.sort_by do |release|
+                            SemanticPuppet::Version.parse release["version"]
+                        end
+                        hash.merge( dep["name"] => deplist )
                     end
                 end
             rescue OpenURI::HTTPError
