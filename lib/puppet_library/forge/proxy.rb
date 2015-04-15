@@ -130,8 +130,11 @@ module PuppetLibrary::Forge
                     base = { "#{author}/#{name}" => [ to_version(response) ] }
                     response["metadata"]["dependencies"].inject(base) do |hash,dep|
                         author, name = dep["name"].split "/"
+                        version_requirement = SemanticPuppet::VersionRange.parse dep["version_requirement"]
                         deplist = get_releases("#{author}-#{name}").collect do |response|
                             to_version(response)
+                        end.select do |release|
+                          version_requirement.include? SemanticPuppet::Version.parse release["version"]
                         end.sort_by do |release|
                             SemanticPuppet::Version.parse release["version"]
                         end
