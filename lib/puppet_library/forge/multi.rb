@@ -93,6 +93,7 @@ module PuppetLibrary::Forge
             modules_to_search = [ OpenStruct.new(:author => author, :name => name, :version => version) ]
 
             already_searched_modules =  []
+            already_searched_modules << OpenStruct.new(:author => author, :name => name, :version => nil) unless version.nil?
 
             metadata_list = []
             while spec = modules_to_search.shift
