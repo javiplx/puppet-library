@@ -43,6 +43,10 @@ module PuppetLibrary::Forge
             @forges = []
         end
 
+        def locals
+            @forges.select{ |f| f.is_a? Directory}
+        end
+
         def prime
             @forges.each_in_parallel &:prime
         end

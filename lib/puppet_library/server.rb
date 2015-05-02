@@ -157,6 +157,9 @@ module PuppetLibrary
             unless @forge.get_module_metadata(metadata.author, metadata.name).first{ |m| m.version == metadata.version }.nil?
                 halt 409, {"error" => "Module already present on library"}.to_json
             end
+            unless dest_forge = @forge.locals.first
+                halt 501, {"error" => "No local forge to store uploaded module"}.to_json
+            end
         end
 
         private
