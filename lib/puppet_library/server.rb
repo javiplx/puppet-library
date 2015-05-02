@@ -143,6 +143,12 @@ module PuppetLibrary
             @forge.clear_cache
         end
 
+        put "/upload" do
+            file = Tempfile.new("puppetmodule")
+            file.write(request.body.read)
+            file.close
+        end
+
         private
         def download(buffer)
             if buffer.respond_to?(:size)
