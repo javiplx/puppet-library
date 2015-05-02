@@ -147,6 +147,16 @@ module PuppetLibrary
             file = Tempfile.new("puppetmodule")
             file.write(request.body.read)
             file.close
+            begin
+                modulefile = PuppetLibrary::Archive::ArchiveReader.new(file.path)
+                metadata_file = archive.read_entry %r[[^/]+/metadata\.json$]
+                metadata = ModuleMetadata.new( JSON.parse(metadata_file) )
+            rescue => error
+                halt 400, {"error" => "Module metadata not present on upload"}.to_json
+            end
+            unless @forge.get_module_metadata(metadata.author, metadata.name).first{ |m| m.version == metadata.version }.nil?
+                halt 409, {"error" => "Module already present on library"}.to_json
+            end
         end
 
         private
