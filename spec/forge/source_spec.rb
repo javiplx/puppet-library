@@ -99,8 +99,10 @@ module PuppetLibrary::Forge
                     end
                 end
 
-                context "when there is a modulefile" do
+                context "when there is only a modulefile" do
                     before do
+                        allow(File).to receive(:exist?).with(modulefile_path) { true }
+                        allow(File).to receive(:exist?).with(metadata_file_path) { false }
                         File.open(modulefile_path, "w") do |modulefile|
                             modulefile.puts <<-EOF
                             name 'puppetlabs-apache'

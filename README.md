@@ -2,12 +2,9 @@
 
 A private Puppet Forge. Compatible with [librarian-puppet](http://librarian-puppet.com).
 
-[![Build Status](https://api.travis-ci.org/drrb/puppet-library.svg)](https://travis-ci.org/drrb/puppet-library)
-[![Coverage Status](https://img.shields.io/coveralls/drrb/puppet-library.svg)](https://coveralls.io/r/drrb/puppet-library)
-[![Code Climate](https://img.shields.io/codeclimate/github/drrb/puppet-library.svg)](https://codeclimate.com/github/drrb/puppet-library)
-
-[![Gem Version](https://badge.fury.io/rb/puppet-library.svg)](http://badge.fury.io/rb/puppet-library)
-[![Dependency Status](https://gemnasium.com/drrb/puppet-library.svg)](https://gemnasium.com/drrb/puppet-library)
+[![Build Status](https://api.travis-ci.org/javiplx/puppet-library.svg)](https://travis-ci.org/javiplx/puppet-library)
+[![Coverage Status](https://coveralls.io/repos/javiplx/puppet-library/badge.svg?branch=master)](https://coveralls.io/r/javiplx/puppet-library?branch=master)
+[![Code Climate](https://codeclimate.com/github/javiplx/puppet-library/badges/gpa.svg)](https://codeclimate.com/github/javiplx/puppet-library)
 
 Puppet Library serves Puppet modules in the same format as [the Puppet Forge](https://forge.puppetlabs.com). This allows you to create a private Puppet Forge and manage all the modules you use completely within your infrastructure.
 
@@ -30,7 +27,7 @@ Install the server as a Gem:
 
 Or, to get the latest, you can install from source
 
-    $ git clone https://github.com/drrb/puppet-library.git
+    $ git clone https://github.com/javiplx/puppet-library.git
     $ cd puppet-library
     $ rake install
 
@@ -122,7 +119,7 @@ Puppet Library implements version 1 of the Forge API, and supports reading
 module metadata from modules' Modulefiles. This means that Puppet Library
 can currently only work with Puppet < 3.6, which uses the new Forge API (v3)
 and has switched to using `metadata.json` instead of `Modulefile`. Progress
-can be tracked [here](https://github.com/drrb/puppet-library/issues?milestone=1).
+can be tracked [here](https://github.com/javiplx/puppet-library/issues?milestone=1).
 
 ## Config file (EXPERIMENTAL)
 

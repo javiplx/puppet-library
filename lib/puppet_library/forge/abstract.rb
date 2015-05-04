@@ -172,6 +172,7 @@ module PuppetLibrary::Forge
         def initialize(metadata, repo)
             @metadata = metadata
             @md5 = repo.get_md5(author, name, version)
+            dependencies.each{ |h| h["version_requirement"].sub!(" v"," ") unless h["version_requirement"].nil? } unless dependencies.nil?
         end
 
         def author

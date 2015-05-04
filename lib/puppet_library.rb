@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 module PuppetLibrary
+    require 'puppet_library/version'
     require 'puppet_library/archive'
     require 'puppet_library/forge'
     require 'puppet_library/http'
@@ -23,5 +24,4 @@ module PuppetLibrary
     require 'puppet_library/puppet_module'
     require 'puppet_library/server'
     require 'puppet_library/util'
-    require 'puppet_library/version'
 end

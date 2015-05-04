@@ -130,16 +130,17 @@ module PuppetLibrary::Forge
 
         def metadata_for_tag(tag)
             @metadata_cache.get(tag) do
-                metadata_file_exists = @git.file_exists?("metadata.json", tag)
-                modulefile_exists = @git.file_exists?("Modulefile", tag)
-                if metadata_file_exists && !modulefile_exists
+                metadata = {}
+                if @git.file_exists?("metadata.json", tag)
                     metadata_file = @git.read_file("metadata.json", tag)
-                    JSON.parse(metadata_file)
-                else
+                    metadata = JSON.parse(metadata_file)
+                end
+                if metadata.empty? && @git.file_exists?("Modulefile", tag)
                     modulefile_source = @git.read_file("Modulefile", tag)
                     modulefile = PuppetLibrary::PuppetModule::Modulefile.parse(modulefile_source)
-                    modulefile.to_metadata
+                    metadata = modulefile.to_metadata
                 end
+                metadata
             end
         end
 

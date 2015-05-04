@@ -1,0 +1,12 @@
+puppet-library (0.18.0a-2) stable; urgency=medium
+
+  * Add initscript and configuration
+
+ -- Javier Palacios <javier.palacios@fon.com>  Wed, 08 Oct 2014 12:59:20 +0200
+
+puppet-library (0.18.0a-1) unstable; urgency=medium
+
+  * First package release
+
+ -- Javier Palacios <javier.palacios@fon.com>  Mon, 11 Aug 2014 17:24:12 +0200
+
