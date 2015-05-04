@@ -160,6 +160,7 @@ module PuppetLibrary
                 @forge.get_module_metadata(metadata.author, metadata.name).first{ |m| m.version == metadata.version }.nil?
                 halt 409, {"error" => "Module already present on library"}.to_json
             rescue Forge::ModuleNotFound
+                FileUtils.cp( file.path , dest_forge.path( metadata ) )
             end
         end
 

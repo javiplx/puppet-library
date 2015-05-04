@@ -74,6 +74,10 @@ module PuppetLibrary::Forge
             archives.map {|path| read_metadata(path) }.compact
         end
 
+        def path(metadata)
+            return "#{@module_dir.path}/#{metadata.author}-#{metadata.name}-#{metadata.version}.tar.gz"
+        end
+
         private
         def read_metadata(archive_path)
             archive = PuppetLibrary::Archive::ArchiveReader.new(archive_path)
