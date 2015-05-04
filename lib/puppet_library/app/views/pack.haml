@@ -1,6 +1,6 @@
 -# -*- encoding: utf-8 -*-
 -# Puppet Library
--# Copyright (C) 2014 drrb
+-# Copyright (C) 2014 Javier Palacios
 -#
 -# This program is free software: you can redistribute it and/or modify
 -# it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
 -# You should have received a copy of the GNU General Public License
 -# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-%h1= "Module #{metadata["full_name"]}"
-%div= "Author: #{metadata["author"]}"
-%div= "Name: #{metadata["name"]}"
-%div= "Description: #{metadata["summary"]}"
-%div= "Versions:"
+%h1= "Module #{this["full_name"]}"
+%div= "Description: #{this["desc"]}"
+%div
+  Version: #{this["version"]}
+  %a(href="download")
+    [Download]
+%div= "Dependencies:"
 %ul
-  - metadata["releases"].each do |release|
-    %li
-      %a(href="/modules/#{metadata["author"]}-#{metadata["name"]}-#{release["version"]}.tar.gz")
-        = release["version"]
+  - metadata.each do |name,mod|
+    %li= " #{name} - #{mod["version"]}"
