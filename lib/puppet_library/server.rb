@@ -144,21 +144,22 @@ module PuppetLibrary
         end
 
         put "/upload" do
+            unless dest_forge = @forge.locals.first
+                halt 501, {"error" => "No local forge to store uploaded module"}.to_json
+            end
             file = Tempfile.new("puppetmodule")
             file.write(request.body.read)
             file.close
+
+            tar = Gem::Package::TarReader.new(Zlib::GzipReader.open(file.path))
+            entry = tar.find {|e| e.full_name =~ %r(.*/metadata.json$) }
+            halt 400, {"error" => "Module metadata not present on upload"}.to_json if entry.nil?
+            metadata = Forge::ModuleMetadata.new( JSON.parse(entry.read) )
+
             begin
-                modulefile = PuppetLibrary::Archive::ArchiveReader.new(file.path)
-                metadata_file = archive.read_entry %r[[^/]+/metadata\.json$]
-                metadata = ModuleMetadata.new( JSON.parse(metadata_file) )
-            rescue => error
-                halt 400, {"error" => "Module metadata not present on upload"}.to_json
-            end
-            unless @forge.get_module_metadata(metadata.author, metadata.name).first{ |m| m.version == metadata.version }.nil?
+                @forge.get_module_metadata(metadata.author, metadata.name).first{ |m| m.version == metadata.version }.nil?
                 halt 409, {"error" => "Module already present on library"}.to_json
-            end
-            unless dest_forge = @forge.locals.first
-                halt 501, {"error" => "No local forge to store uploaded module"}.to_json
+            rescue Forge::ModuleNotFound
             end
         end
 
