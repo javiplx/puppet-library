@@ -13,7 +13,7 @@ Depends: ${shlibs:Depends},
          ${misc:Depends},
          ruby-docile, ruby-open4,
          ruby-rack, ruby-sinatra,
-         ruby-haml,
+         ruby-haml, ruby-redcarpet,
          ruby | ruby-interpreter,
 Description: Private puppet forge compatible with librarian-puppet
  Puppet Library serves Puppet modules in the same format as the Puppet Forge.

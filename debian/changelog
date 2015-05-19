@@ -1,3 +1,12 @@
+puppet-library (1.0.0-1) stable; urgency=medium
+
+  * Allow empty README.md
+  * Enable module download & upload
+  * Allow for broken semver string on some module dependencies
+  * Render documentation on web interface
+
+ -- Javier Palacios <javier.palacios@fon.com>  Mon, 04 May 2015 18:06:35 +0200
+
 puppet-library (0.9.9-4) stable; urgency=medium
 
   * Support forgeapi V3 clients
