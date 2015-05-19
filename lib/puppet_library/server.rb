@@ -157,8 +157,14 @@ module PuppetLibrary
             metadata = Forge::ModuleMetadata.new( JSON.parse(entry.read) , dest_forge )
 
             begin
-                @forge.get_module_metadata(metadata.author, metadata.name).first{ |m| m.version == metadata.version }.nil?
-                halt 409, {"error" => "Module already present on library"}.to_json
+                found = @forge.get_module_metadata(metadata.author, metadata.name)["releases"].select do |mod|
+                    mod["version"].eql? metadata.version
+                end.first
+                if found.nil?
+                    FileUtils.cp( file.path , dest_forge.path( metadata ) )
+                else
+                    halt 409, {"error" => "Module already present on library"}.to_json
+                end
             rescue Forge::ModuleNotFound
                 FileUtils.cp( file.path , dest_forge.path( metadata ) )
             end
