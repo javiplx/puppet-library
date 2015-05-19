@@ -243,7 +243,7 @@ module PuppetLibrary
             tar = Gem::Package::TarReader.new(Zlib::GzipReader.open(file.path))
             entry = tar.find {|e| e.full_name =~ %r(.*/metadata.json$) }
             halt 400, {"error" => "Module metadata not present on upload"}.to_json if entry.nil?
-            metadata = Forge::ModuleMetadata.new( JSON.parse(entry.read) )
+            metadata = Forge::ModuleMetadata.new( JSON.parse(entry.read) , dest_forge )
 
             begin
                 @forge.get_module_metadata(metadata.author, metadata.name).first{ |m| m.version == metadata.version }.nil?
