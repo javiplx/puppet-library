@@ -58,7 +58,7 @@ module PuppetLibrary::Forge
 
         def get_module(author, name, version)
             file_name = "#{author}-#{name}-*.tar.gz"
-            modules = Dir["#{@nexus_dir.path}/#{author}-#{name}/#{version}/#{file_name}"]
+            modules = Dir["#{@nexus_dir.path}/#{author}-#{name}/#{version}/#{file_name}"].sort_by{ |f| File.ctime(f) }.last(1)
             path = modules[0]
             if File.exist? path
                 File.open(path, 'r')
