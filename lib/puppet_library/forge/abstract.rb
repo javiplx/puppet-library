@@ -149,6 +149,10 @@ module PuppetLibrary::Forge
         def project_page
             @metadata["project_page"]
         end
+        
+        def source
+            @metadata["source"]
+        end
 
         def dependency_names
             dependencies.map {|d| d["name"]}
@@ -157,6 +161,9 @@ module PuppetLibrary::Forge
         def to_info
             {
                 "author" => author,
+                "project_url" => project_page,
+                "source" => source,
+                "summary" => summary,
                 "full_name" => full_name,
                 "name" => name,
                 "desc" => description,

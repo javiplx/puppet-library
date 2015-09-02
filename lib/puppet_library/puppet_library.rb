@@ -18,6 +18,7 @@
 require 'optparse'
 require 'rack'
 require 'yaml'
+require 'puppet_library/forge/nexus'
 require 'puppet_library/forge/directory'
 require 'puppet_library/forge/multi'
 require 'puppet_library/forge/proxy'
@@ -75,6 +76,9 @@ module PuppetLibrary
                 options[:forges] = []
                 opts.on("-m", "--module-dir DIR", "Directory containing packaged modules (can be specified multiple times)") do |module_dir|
                     options[:forges] << [Forge::Directory, module_dir]
+                end
+                opts.on("-n", "--nexus-dir DIR", "Nexus storage directory containing packaged modules (can be specified multiple times)") do |nexus_dir|
+                    options[:forges] << [Forge::Nexus, nexus_dir]
                 end
                 opts.on("-x", "--proxy URL", "Remote forge to proxy (can be specified multiple times)") do |url|
                     options[:forges] << [Forge::Proxy, sanitize_url(url)]
@@ -162,7 +166,7 @@ module PuppetLibrary
 
         def process_options!(options)
             options[:forges].map! do |(forge_type, config)|
-                if [ Forge::Directory, Forge::Source ].include? forge_type
+                if [ Forge::Directory, Forge::Source, Forge::Nexus ].include? forge_type
                     [ forge_type, [ Dir.new(sanitize_path(config)) ]]
                 elsif forge_type == Forge::Proxy && options[:cache_basedir]
                     cache_dir = File.join(options[:cache_basedir], url_hostname(config))

@@ -16,10 +16,13 @@
 -# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %h1= "Module #{metadata["full_name"]}"
-%div= "Author: #{metadata["author"]}"
-%div= "Name: #{metadata["name"]}"
-%div= "Description: #{metadata["desc"]}"
-%div= "Versions:"
+%div= "<b>Author:</b> #{metadata["author"]}"
+%div= "<b>Name:</b> #{metadata["name"]}"
+%div= "<b>Homepage:</b> <a href='#{metadata["project_url"]}'>#{metadata["project_url"]}</a>"
+%div= "<b>Source:</b> <a href='#{metadata["source"]}'>#{metadata["source"]}</a>"
+%div= "<b>Description:</b> #{metadata["desc"]}"
+%div= "<b>Summary:</b> #{metadata["summary"]}"
+%div= "<b>Versions:</b>"
 %ul
   - metadata["releases"].each do |release|
     %li= release["version"]
