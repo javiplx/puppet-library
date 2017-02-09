@@ -1,0 +1,19 @@
+[Unit]
+Description=Private puppet forge compatible with librarian-puppet
+#After=network.service
+#Before=network.target
+# A pesar de lo que viera en el tutorial, lo que tienen nagios y apache es
+After=network.target
+
+# Y tambien tienen
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/puppetlibrary.pid
+EnvironmentFile=/etc/sysconfig/puppet-library
+ExecStart=/usr/bin/puppet-library --daemonize --pidfile /var/run/puppetlibrary.pid --module-dir $MODULE_DIR $OPTIONS
+ExecStop=/bin/kill $MAINPID
+Restart=on-failure
+

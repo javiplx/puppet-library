@@ -1,0 +1,8 @@
+# Options for puppet-library service.
+# Location of pid file and daemonization are given on service description
+
+# Directory for private puppet modules
+MODULE_DIR=/var/lib/puppet-library
+
+# Remaining options
+OPTIONS="--bind-host 0.0.0.0 --port 8888 --proxy https://forgeapi.puppetlabs.com --cache-basedir /var/cache/puppet-library"
