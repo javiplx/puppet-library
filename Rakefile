@@ -52,28 +52,8 @@ rescue
     return true
 end
 
-if RUBY_VERSION.start_with? "1.8"
-    namespace :coveralls do
-        task :push do
-            puts "Skipping Coverage pushing because this Ruby version doesn't support it"
-        end
-    end
-else
-    require 'coveralls/rake/task'
-    Coveralls::RakeTask.new
-end
-
 desc "Run the specs"
 RSpec::Core::RakeTask.new(:spec)
-
-if ruby_version_supports_acceptance_tests?
-    require 'cucumber/rake/task'
-    Cucumber::Rake::Task.new(:features)
-else
-    task :features do
-        puts "Skipping acceptance tests because this version of Ruby doesn't support them"
-    end
-end
 
 desc "Run all the tests"
 RSpec::Core::RakeTask.new(:test) do |rspec|

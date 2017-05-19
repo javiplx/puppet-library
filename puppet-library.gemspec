@@ -36,37 +36,11 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "sinatra"
+  spec.add_dependency "sinatra", "~> 1.4"
   spec.add_dependency "json"
-  spec.add_dependency "haml"
+  spec.add_dependency "haml", "~> 4.0"
   spec.add_dependency "docile", ">= 1.0.0"
   spec.add_dependency "open4"
   spec.add_dependency "redcarpet", "~> 2.1.1"
 
-  spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "coveralls"
-  spec.add_development_dependency "rest-client", "~> 1.6.0"
-  spec.add_development_dependency "gitsu"
-  spec.add_development_dependency "librarian-puppet", "~> 1.0"
-  spec.add_development_dependency "mime-types", "< 2"
-  spec.add_development_dependency "pry", "0.9.12.6"
-  spec.add_development_dependency "puppet", "~> 3.6.0"
-  spec.add_development_dependency "rack-test"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "rspec", "~> 3.0.0"
-  spec.add_development_dependency "simplecov"
-
-  # Guard has dependencies that don't work with Ruby < 1.9
-  unless RUBY_VERSION.start_with? "1.8"
-      spec.add_development_dependency "guard"
-      spec.add_development_dependency "guard-rspec"
-      spec.add_development_dependency "terminal-notifier-guard"
-
-      # Capybara needs Nokogiri, which needs 1.9+
-      spec.add_development_dependency "capybara"
-      spec.add_development_dependency "nokogiri" # Rubygems 1.8 fails to resolve this on Ruby 2.0.0
-      spec.add_development_dependency "cucumber"
-      spec.add_development_dependency "selenium-webdriver"
-      spec.add_development_dependency "poltergeist"
-  end
 end
