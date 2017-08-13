@@ -42,5 +42,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "docile", ">= 1.0.0"
   spec.add_dependency "open4"
   spec.add_dependency "redcarpet", "~> 2.1.1"
+  spec.add_dependency "tilt", "2.0.7"
 
 end
