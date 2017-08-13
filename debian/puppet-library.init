@@ -14,28 +14,20 @@ DESC="puppet-library"
 NAME=puppet-library
 SCRIPTNAME=/etc/init.d/$NAME
 
-DAEMON=/usr/bin/daemon
-DAEMON_ARGS="--name=$NAME --inherit --output=/var/log/puppet-library.log" 
-
-# Load the VERBOSE setting and other rcS variables
-. /lib/init/vars.sh
-
-# Define LSB log_* functions.
-# Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
-. /lib/lsb/init-functions
+. /etc/rc.d/init.d/functions
 
 
 case "$1" in
   start)
-    log_daemon_msg "Starting $DESC" "$NAME"
-    /usr/bin/puppet-library -c /etc/puppet-library.conf && echo " OK" || echo " FAIL"
+    echo -n $"Starting puppet-library: "
+    /root/.gem/ruby/1.8/bin/puppet-library -c /etc/puppet-library.conf && echo " OK" || echo " FAIL"
     ;;
   stop)
-    log_daemon_msg "Stopping $DESC" "$NAME"
+    echo -n $"Stopping puppet agent: "
     kill -KILL `cat /var/run/puppetlibrary.pid` && echo " OK" || echo " FAIL"
     ;;
   status)
-    log_daemon_msg "$DESC status "
+    echo "$DESC status "
     ps -p `cat /var/run/puppetlibrary.pid` > /dev/null && echo " running" || echo " stopped"
     ;;
   *)
